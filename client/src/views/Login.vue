@@ -1,5 +1,8 @@
 <template>
-	<div class="register">
+	<div class="login">
+		<p v-if="routeMessage">
+			{{ routeMessage }}
+		</p>
 		<label for="">Email</label><br />
 		<input type="email" placeholder="Email" v-model="email" /><br />
 
@@ -7,13 +10,14 @@
 		<input type="password" placeholder="Password" v-model="password" /><br />
 
 		<button @click="login">Login</button>
-		<p v-if="error" class="error">
-			{{ error }}
+		<p v-if="message" class="error">
+			{{ message }}
 		</p>
 	</div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
 	name: "Register",
 	data() {
@@ -23,9 +27,7 @@ export default {
 		}
 	},
 	computed: {
-		error() {
-			return this.$store.state.message
-		},
+		...mapState(["message", "routeMessage"]),
 	},
 	methods: {
 		async login() {
@@ -39,6 +41,10 @@ export default {
 				console.log(error)
 			}
 		},
+	},
+	beforeRouteLeave(to, from, next) {
+		this.$store.state.routeMessage = null
+		next()
 	},
 }
 </script>

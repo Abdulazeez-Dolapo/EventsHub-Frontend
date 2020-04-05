@@ -54,9 +54,16 @@ module.exports = {
 			}
 
 			const userJson = user.toJSON()
+			let userData = {
+				user_id: userJson.user_id,
+				last_name: userJson.last_name,
+				first_name: userJson.first_name,
+				email: userJson.email,
+			}
+			console.log(user)
 
 			res.send({
-				user: userJson,
+				user: userData,
 				token: generateToken(userJson),
 			})
 		} catch (error) {
