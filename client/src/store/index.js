@@ -14,6 +14,7 @@ export default new Vuex.Store({
 		token: null,
 		logInStatus: false,
 		message: "",
+		userEvents: null,
 		categories: [
 			"Wedding",
 			"Anniversary",
@@ -34,6 +35,9 @@ export default new Vuex.Store({
 			} else {
 				state.logInStatus = false
 			}
+		},
+		SET_USER_EVENTS(state, value) {
+			state.userEvents = value
 		},
 		LOG_OUT(state) {
 			state.user = null
@@ -61,6 +65,8 @@ export default new Vuex.Store({
 				commit("SET_USER", response.data)
 				state.message = response.data.message
 				router.push({ name: "Home" })
+				commit("SET_USER_EVENTS", [])
+				console.log(userEvents)
 			} catch (error) {
 				state.message = error.response.data.error
 			}
@@ -70,6 +76,15 @@ export default new Vuex.Store({
 			try {
 				const response = await AuthenticationService.login(userInfo)
 				commit("SET_USER", response.data)
+
+				const eventResponse = await EventService.getUserEvents(
+					state.user.user_id
+				)
+				let userEvents = eventResponse.data.data
+
+				commit("SET_USER_EVENTS", userEvents)
+				console.log(userEvents)
+
 				state.message = response.data.message
 				router.push({ name: "Home" })
 			} catch (error) {
@@ -122,8 +137,41 @@ export default new Vuex.Store({
 					number: response.data.number,
 					id: info.event_id,
 				}
+
 				const event = await EventService.updateEvent(eventData)
 				commit("GET_EVENT", event.data.data)
+
+				const eventResponse = await EventService.getUserEvents(
+					state.user.user_id
+				)
+				let userEvents = eventResponse.data.data
+				commit("SET_USER_EVENTS", userEvents)
+				console.log(userEvents)
+			} catch (error) {
+				console.log(error)
+				commit("SET_MESSAGE", error)
+			}
+		},
+
+		async cancelAttendance({ state, commit }, eventData) {
+			try {
+				const response = await EventService.cancelAttendance(eventData)
+
+				const info = {
+					number: response.data.number,
+					id: eventData.event_id,
+				}
+				const event = await EventService.updateEvent(info)
+				commit("GET_EVENT", event.data.data)
+
+				const newArray = state.userEvents.filter(element => {
+					if (element.event_id != state.newEvent.event_id) {
+						return element
+					}
+				})
+				commit("SET_USER_EVENTS", newArray)
+
+				console.log(state.userEvents)
 			} catch (error) {
 				console.log(error)
 				commit("SET_MESSAGE", error)

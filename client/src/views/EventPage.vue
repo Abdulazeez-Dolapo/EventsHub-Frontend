@@ -21,6 +21,10 @@
 			<button v-if="logInStatus" @click="attend">
 				Attend Event
 			</button>
+
+			<button v-if="logInStatus" @click="cancel">
+				Cancel attendance
+			</button>
 		</div>
 	</div>
 </template>
@@ -35,7 +39,7 @@ export default {
 		},
 	},
 	computed: {
-		...mapState(["logInStatus", "newEvent", "user"]),
+		...mapState(["logInStatus", "newEvent", "user", "userEvents"]),
 		formattedDate() {
 			return this.formatDate(this.event.date)
 		},
@@ -52,16 +56,43 @@ export default {
 			return formattedDate
 		},
 		async attend() {
-			const data = {
-				event_id: this.event.event_id,
-				event_title: this.event.title,
-				organiser_id: this.event.organiser_id,
-				guest_first_name: this.user.first_name,
-				guest_last_name: this.user.last_name,
-				guest_user_id: this.user.user_id,
+			let eventArray = []
+
+			this.userEvents.forEach(element => {
+				eventArray.push(element.event_id)
+			})
+
+			if (eventArray.includes(this.event.event_id)) {
+				alert("You have already marked your attendance at this event")
+				return
+			} else {
+				const data = {
+					event_id: this.event.event_id,
+					event_title: this.event.title,
+					organiser_id: this.event.organiser_id,
+					guest_first_name: this.user.first_name,
+					guest_last_name: this.user.last_name,
+					guest_user_id: this.user.user_id,
+				}
+				await this.$store.dispatch("markAttendance", data)
+				this.event = this.newEvent
 			}
-			await this.$store.dispatch("markAttendance", data)
-			this.event = this.newEvent
+		},
+		async cancel() {
+			if (window.confirm("Are you sure you want to cancel?")) {
+				try {
+					const info = {
+						event_id: this.event.event_id,
+						guest_user_id: this.user.user_id,
+					}
+					await this.$store.dispatch("cancelAttendance", info)
+					this.event = this.newEvent
+				} catch (error) {
+					console.log(error)
+				}
+			} else {
+				return
+			}
 		},
 	},
 }

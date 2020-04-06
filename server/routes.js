@@ -27,5 +27,7 @@ module.exports = app => {
 
 	app.post("/mark-attendance", Guest.markAttendance)
 
-	// app.get("/get-guests/:id", Guest.getGuests)
+	app.post("/cancel-attendance", Guest.cancelAttendance)
+
+	app.get("/get-user-events/:id", Guest.getUserEvents)
 }

@@ -13,8 +13,15 @@ export default {
 	updateEvent(event) {
 		return Api().post("update-event", event)
 	},
+	getUserEvents(id) {
+		return Api().get(`get-user-events/${id}`)
+	},
 
 	markAttendance(info) {
 		return Api().post("mark-attendance", info)
+	},
+
+	cancelAttendance(info) {
+		return Api().post("cancel-attendance", info)
 	},
 }
