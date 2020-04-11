@@ -10,7 +10,7 @@ import Header from "@/components/Header"
 
 export default {
 	components: {
-		Header,
+		Header
 	},
 	created() {
 		const token = sessionStorage.getItem("token")
@@ -21,7 +21,7 @@ export default {
 		} else {
 			this.$store.state.logInStatus = false
 		}
-	},
+	}
 }
 </script>
 <style></style>
