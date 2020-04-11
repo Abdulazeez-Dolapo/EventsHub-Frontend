@@ -62,7 +62,7 @@ import moment from "moment"
 export default {
 	name: "Register",
 	components: {
-		Datepicker,
+		Datepicker
 	},
 	data() {
 		const times = []
@@ -77,7 +77,7 @@ export default {
 		return {
 			categories: this.$store.state.categories,
 			times,
-			event: this.createEventData(),
+			event: this.createEventData()
 		}
 	},
 	computed: {
@@ -93,7 +93,7 @@ export default {
 				" " +
 				this.$store.state.user[0]["last_name"]
 			)
-		},
+		}
 	},
 	methods: {
 		customFormatter(date) {
@@ -115,19 +115,18 @@ export default {
 				location: "",
 				time: "",
 				date: "",
-				max_guests: "",
+				max_guests: ""
 			}
 		},
 		async createEvent() {
 			try {
 				await this.$store.dispatch("createEvent", this.event)
 				this.event = this.createEventData()
-				console.log(this.createEventData())
 			} catch (error) {
 				console.log(error)
 			}
-		},
-	},
+		}
+	}
 }
 </script>
 

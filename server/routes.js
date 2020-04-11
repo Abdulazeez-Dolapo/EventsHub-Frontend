@@ -29,6 +29,8 @@ module.exports = (app) => {
 
 	app.post("/update-event", Authorise, Event.updateEvent)
 
+	app.delete("/delete-event/:id", Authorise, Event.deleteEvent)
+
 	app.get(
 		"/get-user-created-events/:user_id",
 		Authorise,

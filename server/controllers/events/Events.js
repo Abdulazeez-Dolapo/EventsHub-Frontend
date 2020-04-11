@@ -49,6 +49,24 @@ module.exports = {
 		}
 	},
 
+	async deleteEvent(req, res) {
+		try {
+			const response = await Events.destroy({
+				where: {
+					event_id: req.params.id,
+				},
+			})
+			res.status(200).json({
+				message: "event successfully deleted",
+			})
+		} catch (error) {
+			console.log(error)
+			res.status(400).send({
+				error: "Event could not be deleted",
+			})
+		}
+	},
+
 	async getUserCreatedEvents(req, res) {
 		try {
 			const response = await Events.findAll({
