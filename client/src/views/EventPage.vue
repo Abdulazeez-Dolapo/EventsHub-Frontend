@@ -43,19 +43,19 @@ export default {
 	props: {
 		event: {
 			type: Object,
-			required: true,
-		},
+			required: true
+		}
 	},
 	data() {
 		return {
-			message: this.$store.state.message,
+			message: this.$store.state.message
 		}
 	},
 	computed: {
 		...mapState(["logInStatus", "newEvent", "user", "userEvents"]),
 		formattedDate() {
 			return this.formatDate(this.event.date)
-		},
+		}
 	},
 	methods: {
 		formatDate(date) {
@@ -63,7 +63,7 @@ export default {
 			const formattedDate = dateToFormat.toLocaleString(["en-us"], {
 				month: "long",
 				day: "2-digit",
-				year: "numeric",
+				year: "numeric"
 			})
 
 			return formattedDate
@@ -72,7 +72,7 @@ export default {
 			let eventArray = []
 
 			if (this.userEvents) {
-				this.userEvents.forEach((element) => {
+				this.userEvents.forEach(element => {
 					eventArray.push(element.event_id)
 				})
 			}
@@ -87,7 +87,7 @@ export default {
 					organiser_id: this.event.organiser_id,
 					guest_first_name: this.user.first_name,
 					guest_last_name: this.user.last_name,
-					guest_user_id: this.user.user_id,
+					guest_user_id: this.user.user_id
 				}
 				await this.$store.dispatch("markAttendance", data)
 				this.event = this.newEvent
@@ -100,7 +100,7 @@ export default {
 				try {
 					const info = {
 						event_id: this.event.event_id,
-						guest_user_id: this.user.user_id,
+						guest_user_id: this.user.user_id
 					}
 					await this.$store.dispatch("cancelAttendance", info)
 					this.event = this.newEvent
@@ -115,12 +115,11 @@ export default {
 		},
 		clearMessage() {
 			setTimeout(() => {
-				console.log("timer")
 				this.message = null
 				this.$store.state.message = null
 			}, 2000)
-		},
-	},
+		}
+	}
 }
 </script>
 

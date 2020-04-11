@@ -10,6 +10,9 @@ export default {
 	getEvent(id) {
 		return Api().get(`get-event/${id}`)
 	},
+	deleteEvent(id) {
+		return Api().delete(`delete-event/${id}`)
+	},
 	updateEventAttendance(event) {
 		return Api().post("update-event-attendance", event)
 	},
@@ -29,5 +32,5 @@ export default {
 
 	cancelAttendance(info) {
 		return Api().post("cancel-attendance", info)
-	},
+	}
 }

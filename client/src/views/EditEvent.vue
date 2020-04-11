@@ -54,6 +54,8 @@
 
 			<button type="submit">Edit Event</button><br />
 		</form>
+		<button @click="deleteEvent">Delete Event</button><br />
+
 		<p v-if="error" class="error">
 			{{ error }}
 		</p>
@@ -69,14 +71,14 @@ export default {
 	props: {
 		eventData: {
 			type: Object,
-			required: true,
-		},
+			required: true
+		}
 	},
 	components: {
-		Datepicker,
+		Datepicker
 	},
 	computed: {
-		...mapState(["categories"]),
+		...mapState(["categories"])
 	},
 	data() {
 		const times = []
@@ -92,7 +94,7 @@ export default {
 			error: null,
 			times,
 			event: this.editEventData(),
-			submitted: false,
+			submitted: false
 		}
 	},
 	methods: {
@@ -105,7 +107,7 @@ export default {
 				location: this.eventData.location,
 				time: this.eventData.time,
 				date: this.eventData.date,
-				max_guests: this.eventData.max_guests,
+				max_guests: this.eventData.max_guests
 			}
 		},
 		customFormatter(date) {
@@ -115,6 +117,18 @@ export default {
 			this.submitted = true
 			await this.$store.dispatch("editEvent", this.event)
 		},
+		async deleteEvent() {
+			if (
+				window.confirm(
+					"This event can not be recovered. Are you sure you want to delete it?"
+				)
+			) {
+				this.submitted = true
+				await this.$store.dispatch("deleteEvent", this.$route.params.id)
+			} else {
+				return
+			}
+		}
 	},
 	beforeRouteLeave(to, from, next) {
 		if (!this.submitted) {
@@ -130,7 +144,7 @@ export default {
 		} else {
 			next()
 		}
-	},
+	}
 }
 </script>
 

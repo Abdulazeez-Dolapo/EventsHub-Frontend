@@ -159,6 +159,16 @@ export default new Vuex.Store({
 			}
 		},
 
+		async deleteEvent({ commit }, data) {
+			try {
+				const response = await EventService.deleteEvent(data)
+				commit("SET_MESSAGE", response.data.message)
+				router.push({ name: "Profile" })
+			} catch (error) {
+				console.log(error)
+			}
+		},
+
 		async markAttendance({ state, commit }, info) {
 			try {
 				const response = await EventService.markAttendance(info)
