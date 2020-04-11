@@ -10,11 +10,17 @@ export default {
 	getEvent(id) {
 		return Api().get(`get-event/${id}`)
 	},
+	updateEventAttendance(event) {
+		return Api().post("update-event-attendance", event)
+	},
 	updateEvent(event) {
 		return Api().post("update-event", event)
 	},
 	getUserEvents(id) {
 		return Api().get(`get-user-events/${id}`)
+	},
+	getUserCreatedEvents(user_id) {
+		return Api().get(`get-user-created-events/${user_id}`)
 	},
 
 	markAttendance(info) {

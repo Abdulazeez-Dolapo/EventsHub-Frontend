@@ -49,7 +49,25 @@ module.exports = {
 		}
 	},
 
-	async updateEvent(req, res) {
+	async getUserCreatedEvents(req, res) {
+		try {
+			const response = await Events.findAll({
+				where: {
+					organiser_id: req.params.user_id,
+				},
+			})
+			res.send({
+				userEvents: response,
+			})
+		} catch (error) {
+			console.log(error)
+			res.status(400).send({
+				error: "Event could not be found",
+			})
+		}
+	},
+
+	async updateEventAttendance(req, res) {
 		try {
 			await Events.update(
 				{ number_attending: req.body.number },
@@ -66,6 +84,35 @@ module.exports = {
 			})
 			res.send({
 				data: event,
+			})
+		} catch (error) {
+			console.log(error)
+			res.status(400).send({
+				error: "Error updating event",
+			})
+		}
+	},
+
+	async updateEvent(req, res) {
+		try {
+			const event = await Events.update(
+				{
+					title: req.body.title,
+					category: req.body.category,
+					description: req.body.description,
+					location: req.body.location,
+					time: req.body.time,
+					date: req.body.date,
+					max_guests: req.body.max_guests,
+				},
+				{
+					where: {
+						event_id: req.body.event_id,
+					},
+				}
+			)
+			res.send({
+				message: "You've successfully edited this event",
 			})
 		} catch (error) {
 			console.log(error)

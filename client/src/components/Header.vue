@@ -30,6 +30,13 @@
 		<button v-if="this.$store.state.logInStatus" @click="logout">
 			Logout
 		</button>
+
+		<router-link
+			v-if="this.$store.state.logInStatus"
+			:to="{ name: 'Profile' }"
+			style="margin-left: 6rem"
+			>Profile</router-link
+		>
 	</div>
 </template>
 

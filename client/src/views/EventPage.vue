@@ -1,5 +1,10 @@
 <template>
 	<div class="event-page">
+		<div>
+			<p v-if="message">
+				{{ message }}
+			</p>
+		</div>
 		<div class="event">
 			<p>{{ formattedDate }} @{{ event.time }}</p>
 			<h3>
@@ -32,11 +37,19 @@
 <script>
 import { mapState } from "vuex"
 export default {
+	created() {
+		this.clearMessage()
+	},
 	props: {
 		event: {
 			type: Object,
 			required: true,
 		},
+	},
+	data() {
+		return {
+			message: this.$store.state.message,
+		}
 	},
 	computed: {
 		...mapState(["logInStatus", "newEvent", "user", "userEvents"]),
@@ -58,9 +71,11 @@ export default {
 		async attend() {
 			let eventArray = []
 
-			this.userEvents.forEach(element => {
-				eventArray.push(element.event_id)
-			})
+			if (this.userEvents) {
+				this.userEvents.forEach((element) => {
+					eventArray.push(element.event_id)
+				})
+			}
 
 			if (eventArray.includes(this.event.event_id)) {
 				alert("You have already marked your attendance at this event")
@@ -76,6 +91,8 @@ export default {
 				}
 				await this.$store.dispatch("markAttendance", data)
 				this.event = this.newEvent
+				this.message = "You have successfully marked your attendance"
+				this.clearMessage()
 			}
 		},
 		async cancel() {
@@ -87,12 +104,21 @@ export default {
 					}
 					await this.$store.dispatch("cancelAttendance", info)
 					this.event = this.newEvent
+					this.message = "You have successfully canceled your attendance"
+					this.clearMessage()
 				} catch (error) {
 					console.log(error)
 				}
 			} else {
 				return
 			}
+		},
+		clearMessage() {
+			setTimeout(() => {
+				console.log("timer")
+				this.message = null
+				this.$store.state.message = null
+			}, 2000)
 		},
 	},
 }

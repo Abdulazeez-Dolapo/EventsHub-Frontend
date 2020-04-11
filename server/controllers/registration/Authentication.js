@@ -4,7 +4,7 @@ const config = require("../../config/config")
 const bcrypt = require("bcrypt")
 
 function generateToken(user) {
-	const expire = 60 * 60 * 24 * 7
+	const expire = 60 * 60 * 24
 	return jwt.sign(user, config.jwt.secret, {
 		expiresIn: expire,
 	})
@@ -64,7 +64,7 @@ module.exports = {
 
 			res.send({
 				user: userData,
-				token: generateToken(userJson),
+				token: generateToken(userData),
 			})
 		} catch (error) {
 			console.log(error)
