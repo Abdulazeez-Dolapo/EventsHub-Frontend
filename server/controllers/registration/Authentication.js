@@ -18,10 +18,13 @@ module.exports = {
 
 			const user = await User.create(req.body)
 			const userJson = user.toJSON()
+			const payload = {
+				name: userJson.first_name,
+				user_id: userJson.user_id,
+			}
 
-			res.send({
-				user: userJson,
-				token: generateToken(userJson),
+			res.status(200).json({
+				token: generateToken(payload),
 			})
 		} catch (error) {
 			console.log(error)
@@ -60,7 +63,6 @@ module.exports = {
 				first_name: userJson.first_name,
 				email: userJson.email,
 			}
-			console.log(user)
 
 			res.send({
 				user: userData,
