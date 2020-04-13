@@ -1,127 +1,54 @@
 <template>
 	<div class="home">
-		<p>
-			{{ logInStatus }}
-		</p>
-		<div
-			class="event"
-			v-for="event in pagedEvents"
-			:key="event.event_id"
-			@click="viewEvent(event.event_id)"
-		>
-			<p>{{ formattedDate }} @{{ event.time }} in {{ event.location }}</p>
-			<h4>
-				{{ event.title }}
-			</h4>
-			<p>
-				{{ event.description }}
-			</p>
-		</div>
-		<div class="nav">
-			<button :disabled="!showPrev" @click="prev">Prev</button>
-			<button :disabled="!showNext" @click="next">Next</button>
+		<div class="text">
+			<h1>
+				Welcome to EventsHub
+			</h1>
+			<h3>
+				Your home of events
+			</h3>
+			<button
+				@click="login"
+				class="btn btn-outline-info btn-rounded py-2 btn-block my-4 waves-effect z-depth-0"
+			>
+				Get Started
+			</button>
 		</div>
 	</div>
 </template>
 
 <script>
-// @ is an alias to /src
-import { mapState } from "vuex"
-
 export default {
 	name: "Home",
-	props: {
-		events: {
-			type: Array,
-			required: true
-		}
-	},
-	created() {
-		this.showPrev = false
-		this.paginate()
-	},
-	data() {
-		return {
-			pagedEvents: null,
-			page: 1,
-			start: 0,
-			end: 5,
-			showPrev: true,
-			showNext: true
-		}
-	},
-	watch: {
-		page() {
-			const maxPageNumber = Math.ceil(this.events.length / 5)
-			if (this.page == 1) {
-				this.showPrev = false
-			} else if (this.page == maxPageNumber) {
-				this.showNext = false
-			} else {
-				this.showNext = true
-				this.showPrev = true
-			}
-		}
-	},
-	computed: {
-		...mapState(["logInStatus"]),
-		formattedDate() {
-			for (const event of this.events) {
-				const date = new Date(event.date)
-				const formattedDate = date.toLocaleString(["en-us"], {
-					month: "long",
-					day: "2-digit",
-					year: "numeric"
-				})
-				return formattedDate
-			}
-		}
-	},
 	methods: {
-		viewEvent(id) {
-			this.$router.push({ path: `event/${id}` })
-		},
-		paginate(start = 0, end = 5) {
-			const eventList = this.events
-			const pagedEvents = eventList.slice(start, end)
-			this.pagedEvents = pagedEvents
-		},
-		next() {
-			this.start = this.start + 5
-			this.end = this.end + 5
-			this.page++
-			this.paginate(this.start, this.end)
-		},
-		prev() {
-			this.start = this.start - 5
-			this.end = this.end - 5
-			this.page--
-			this.paginate(this.start, this.end)
+		login() {
+			this.$store.dispatch("logout")
+			this.$router.push({ name: "Login" })
 		}
 	}
 }
 </script>
+
 <style scoped>
-.event {
-	width: 60%;
-	margin-left: 10rem;
-	margin-bottom: 0.4rem;
-	padding: 0.1rem 1rem;
-	box-shadow: 1px 2px 5px #ccc;
+.text {
+	position: absolute;
+	color: white;
+	text-align: center;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+		Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-.nav {
-	width: 60%;
-	padding: 0.2em 0.2em;
-	justify-content: center;
-	margin: 0 auto;
+button {
+	border-radius: 2em;
+	background-color: #17a2bb;
+	color: white;
 }
 
-.nav button:hover {
-	cursor: pointer;
-}
-
-.event:hover {
-	cursor: pointer;
+button:hover {
+	background-color: #892c4f;
+	border: solid 1px #892c4f;
 }
 </style>

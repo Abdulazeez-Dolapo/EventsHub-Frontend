@@ -44,11 +44,7 @@ export default new Vuex.Store({
 		LOG_OUT(state) {
 			state.user = null
 			state.logInStatus = false
-		},
-		RESET_STATE(state) {
-			state.user = []
 			state.message = null
-			state.logInStatus = false
 			state.userEvents = null
 			state.userCreatedEvents = null
 		},
@@ -63,11 +59,8 @@ export default new Vuex.Store({
 		async register({ state, commit }, userInfo) {
 			try {
 				const response = await AuthenticationService.register(userInfo)
-				commit("SET_USER", response.data)
 				state.message = response.data.message
-				router.push({ name: "Home" })
-				commit("SET_USER_EVENTS", [])
-				commit("SET_USER_CREATED_EVENTS", [])
+				router.push({ name: "Login" })
 			} catch (error) {
 				state.message = error.response.data.error
 			}
@@ -81,7 +74,7 @@ export default new Vuex.Store({
 				this.dispatch("getUserEvents")
 
 				state.message = response.data.message
-				router.push({ name: "Home" })
+				router.push({ name: "AllEvents" })
 			} catch (error) {
 				state.message = error.response.data.error
 			}
@@ -112,10 +105,6 @@ export default new Vuex.Store({
 		logout({ commit }) {
 			commit("LOG_OUT")
 			sessionStorage.removeItem("token")
-		},
-
-		reset({ commit }) {
-			commit("RESET_STATE")
 		},
 
 		async createEvent({ state, commit }, event) {

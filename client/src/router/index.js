@@ -1,6 +1,7 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
 import Home from "../views/Home.vue"
+import AllEvents from "../views/AllEvents.vue"
 import EventPage from "../views/EventPage.vue"
 import Register from "../views/Register.vue"
 import Login from "../views/Login.vue"
@@ -21,9 +22,9 @@ Vue.use(VueRouter)
 
 const routes = [
 	{
-		path: "/",
-		name: "Home",
-		component: Home,
+		path: "/events",
+		name: "AllEvents",
+		component: AllEvents,
 		props: true,
 		beforeEnter(to, from, next) {
 			store.dispatch("getEvents").then(events => {
@@ -72,6 +73,11 @@ const routes = [
 		path: "/register",
 		name: "Register",
 		component: Register
+	},
+	{
+		path: "/",
+		name: "Home",
+		component: Home
 	},
 	{
 		path: "/login",
