@@ -1,18 +1,33 @@
 const Guests = require("../../models/Guests")
+const Events = require("../../models/Events")
 
 module.exports = {
 	async markAttendance(req, res) {
 		try {
-			await Guests.create(req.body)
-			const allGuests = await Guests.findAll({
+			const event = await Events.findOne({
 				where: {
 					event_id: req.body.event_id,
 				},
 			})
-			res.send({
-				number: allGuests.length,
-				message: "Hurray! You have marked yourself as attending this event",
-			})
+
+			if (event.number_attending >= event.max_guests) {
+				res.send({
+					message: "Sorry! This event has reached it's maximum limit",
+				})
+				return
+			} else {
+				await Guests.create(req.body)
+				const allGuests = await Guests.findAll({
+					where: {
+						event_id: req.body.event_id,
+					},
+				})
+				res.send({
+					number: allGuests.length,
+					message:
+						"Hurray! You have marked yourself as attending this event",
+				})
+			}
 		} catch (error) {
 			console.log(error)
 			res.status(400).send({

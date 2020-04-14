@@ -46,6 +46,8 @@
 							size="sm"
 							class="mr-sm-2"
 							placeholder="Search"
+							v-model.trim="item"
+							@input="search"
 						></b-form-input>
 					</b-nav-form>
 
@@ -76,11 +78,18 @@ export default {
 	name: "Header",
 	data() {
 		return {
-			searchBy: ""
+			searchBy: "title",
+			item: ""
+		}
+	},
+	watch: {
+		$route(to, from) {
+			this.item = ""
+			this.$store.dispatch("searchedEvents", null)
 		}
 	},
 	computed: {
-		...mapState(["logInStatus", "user"])
+		...mapState(["logInStatus", "user", "allEvents", "searchedEvents"])
 	},
 	methods: {
 		logout() {
@@ -110,9 +119,22 @@ export default {
 		},
 		choose(e) {
 			this.searchBy = e.target.innerText
+			this.search()
+		},
+		startSearch(by, item) {
+			const searchedEvents = []
+			this.allEvents.forEach(event => {
+				if (event[by.trim()].includes(item.trim())) {
+					searchedEvents.push(event)
+				}
+			})
+			return searchedEvents
 		},
 		search() {
-			// alert(this.searchBy)
+			const events = this.startSearch(this.searchBy, this.item)
+			console.log(events)
+			this.$store.dispatch("searchedEvents", events)
+			console.log(this.searchedEvents)
 		}
 	}
 }
