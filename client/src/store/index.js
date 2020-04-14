@@ -13,6 +13,8 @@ export default new Vuex.Store({
 		user: null,
 		logInStatus: false,
 		message: "",
+		allEvents: null,
+		searchedEvents: [],
 		userEvents: null,
 		userCreatedEvents: null,
 		categories: [
@@ -35,6 +37,9 @@ export default new Vuex.Store({
 				state.logInStatus = false
 			}
 		},
+		SET_ALL_EVENTS(state, value) {
+			state.allEvents = value
+		},
 		SET_USER_EVENTS(state, value) {
 			state.userEvents = value
 		},
@@ -53,6 +58,9 @@ export default new Vuex.Store({
 		},
 		GET_EVENT(state, event) {
 			state.newEvent = event
+		},
+		SEARCHED_EVENTS(state, events) {
+			state.searchedEvents = events
 		}
 	},
 	actions: {
@@ -107,6 +115,10 @@ export default new Vuex.Store({
 			sessionStorage.removeItem("token")
 		},
 
+		searchedEvents({ commit }, events) {
+			commit("SEARCHED_EVENTS", events)
+		},
+
 		async createEvent({ state, commit }, event) {
 			try {
 				const response = await EventService.createEvent(event)
@@ -121,6 +133,7 @@ export default new Vuex.Store({
 		async getEvents({ state }) {
 			try {
 				const response = await EventService.getEvents()
+				this.commit("SET_ALL_EVENTS", response.data.events)
 				return response.data.events
 			} catch (error) {
 				console.log(error)
@@ -175,7 +188,7 @@ export default new Vuex.Store({
 				)
 				let userEvents = eventResponse.data.data
 				commit("SET_USER_EVENTS", userEvents)
-				// commit("SET_MESSAGE", "You have marked your attendance")
+				commit("SET_MESSAGE", response.data.message)
 			} catch (error) {
 				console.log(error)
 				commit("SET_MESSAGE", error)

@@ -1,5 +1,15 @@
 <template>
 	<div class="event-page">
+		<div class="card" style="width: 18rem;">
+			<div class="card-body">
+				<h5 class="card-title">Card title</h5>
+				<p class="card-text">
+					Some quick example text to build on the card title and make up
+					the bulk of the card's content.
+				</p>
+				<a href="#" class="btn btn-primary">Go somewhere</a>
+			</div>
+		</div>
 		<div>
 			<p v-if="message">
 				{{ message }}
@@ -48,11 +58,11 @@ export default {
 	},
 	data() {
 		return {
-			message: this.$store.state.message
+			// message: this.$store.state.message
 		}
 	},
 	computed: {
-		...mapState(["logInStatus", "newEvent", "user", "userEvents"]),
+		...mapState(["logInStatus", "newEvent", "user", "userEvents", "message"]),
 		formattedDate() {
 			return this.formatDate(this.event.date)
 		}
@@ -78,7 +88,10 @@ export default {
 			}
 
 			if (eventArray.includes(this.event.event_id)) {
-				alert("You have already marked your attendance at this event")
+				this.$store.commit(
+					"SET_MESSAGE",
+					"You have already marked your attendance at this event"
+				)
 				return
 			} else {
 				const data = {
@@ -91,7 +104,6 @@ export default {
 				}
 				await this.$store.dispatch("markAttendance", data)
 				this.event = this.newEvent
-				this.message = "You have successfully marked your attendance"
 				this.clearMessage()
 			}
 		},
@@ -115,9 +127,8 @@ export default {
 		},
 		clearMessage() {
 			setTimeout(() => {
-				this.message = null
 				this.$store.state.message = null
-			}, 2000)
+			}, 3000)
 		}
 	}
 }
