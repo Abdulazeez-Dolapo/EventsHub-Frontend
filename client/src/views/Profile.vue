@@ -48,7 +48,7 @@
 						</li>
 					</ul>
 					<button @click="edit(event.event_id)">
-						edit
+						<i class="fas fa-edit"></i>
 					</button>
 				</div>
 			</div>
