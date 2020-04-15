@@ -6,6 +6,7 @@ export default () => {
 		baseURL: `http://localhost:5000/`,
 		headers: {
 			authorization: `Bearer ${token}`
-		}
+		},
+		timeout: 10000
 	})
 }

@@ -1,45 +1,37 @@
 <template>
 	<div class="event-page">
-		<div class="card" style="width: 18rem;">
+		<div class="card">
 			<div class="card-body">
-				<h5 class="card-title">Card title</h5>
-				<p class="card-text">
-					Some quick example text to build on the card title and make up
-					the bulk of the card's content.
-				</p>
-				<a href="#" class="btn btn-primary">Go somewhere</a>
-			</div>
-		</div>
-		<div>
-			<p v-if="message">
-				{{ message }}
-			</p>
-		</div>
-		<div class="event">
-			<p>{{ formattedDate }} @{{ event.time }}</p>
-			<h3>
-				{{ event.title }}
-			</h3>
-			<p>
-				{{ event.description }}
-			</p>
-			<p>
-				{{ event.location }}
-			</p>
-			<p>
-				{{ event.organiser_name }}
-			</p>
-			<p>
-				{{ event.category }}
-			</p>
-			<p>{{ event.number_attending }} attending</p>
-			<button v-if="logInStatus" @click="attend">
-				Attend Event
-			</button>
+				<h5 class="card-title">{{ event.title }}</h5>
+				<div class="card-text">
+					<p>{{ formattedDate }} @{{ event.time }}</p>
+					<p>
+						{{ event.description }}
+					</p>
+					<p>
+						{{ event.location }}
+					</p>
+					<p>
+						{{ event.organiser_name }}
+					</p>
+					<p>
+						{{ event.category }}
+					</p>
+					<p>{{ event.number_attending }} attending</p>
+				</div>
+				<button class="btn btn-primary" v-if="logInStatus" @click="attend">
+					Attend Event
+				</button>
 
-			<button v-if="logInStatus" @click="cancel">
-				Cancel attendance
-			</button>
+				<button class="btn btn-primary" v-if="logInStatus" @click="cancel">
+					Cancel attendance
+				</button>
+			</div>
+			<div>
+				<p v-if="message">
+					{{ message }}
+				</p>
+			</div>
 		</div>
 	</div>
 </template>
@@ -57,9 +49,7 @@ export default {
 		}
 	},
 	data() {
-		return {
-			// message: this.$store.state.message
-		}
+		return {}
 	},
 	computed: {
 		...mapState(["logInStatus", "newEvent", "user", "userEvents", "message"]),
@@ -116,7 +106,10 @@ export default {
 					}
 					await this.$store.dispatch("cancelAttendance", info)
 					this.event = this.newEvent
-					this.message = "You have successfully canceled your attendance"
+					this.$store.commit(
+						"SET_MESSAGE",
+						"You have successfully canceled your attendance at this event"
+					)
 					this.clearMessage()
 				} catch (error) {
 					console.log(error)
@@ -135,11 +128,11 @@ export default {
 </script>
 
 <style scoped>
-.event {
+.event-page {
 	width: 60%;
+	margin-top: 4rem;
 	margin-left: 10rem;
 	margin-bottom: 4rem;
 	padding: 1rem;
-	box-shadow: 1px 2px 5px #ccc;
 }
 </style>

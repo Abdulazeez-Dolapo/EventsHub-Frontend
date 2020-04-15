@@ -4,18 +4,19 @@ import Home from "../views/Home.vue"
 import AllEvents from "../views/AllEvents.vue"
 import EventPage from "../views/EventPage.vue"
 import Register from "../views/Register.vue"
+import Confirm from "../views/Confirm.vue"
 import Login from "../views/Login.vue"
 import CreateEvent from "../views/CreateEvent.vue"
 import EditEvent from "../views/EditEvent.vue"
 import Profile from "../views/Profile.vue"
+import ErrorPage from "../views/Error.vue"
+import NetworkError from "../views/NetworkError.vue"
 import Nprogress from "nprogress"
 import store from "@/store"
-import jwt from "jsonwebtoken"
 
-function checkToken(token) {
+function checkToken(token, user) {
 	store.state.logInStatus = true
-	const decoded = jwt.verify(token, "secret")
-	store.state.user = decoded
+	store.state.user = user
 }
 
 Vue.use(VueRouter)
@@ -39,14 +40,27 @@ const routes = [
 		component: EventPage,
 		props: true,
 		beforeEnter(to, from, next) {
-			store.dispatch("getEvent", to.params.id).then(event => {
-				to.params.event = event
-				store.dispatch("getUserEvents").then(() => {
-					store.dispatch("getUserCreatedEvents").then(() => {
-						next()
+			store
+				.dispatch("getEvent", to.params.id)
+				.then(event => {
+					to.params.event = event
+					store.dispatch("getUserEvents").then(() => {
+						store.dispatch("getUserCreatedEvents").then(() => {
+							next()
+						})
 					})
 				})
-			})
+				.catch(error => {
+					console.log(error)
+					if (error.response && error.response.status == "404") {
+						next({
+							name: "NotFound",
+							params: { missing: "event" }
+						})
+					} else {
+						next({ name: "NetworkError" })
+					}
+				})
 		}
 	},
 	{
@@ -57,7 +71,8 @@ const routes = [
 		beforeEnter(to, from, next) {
 			const token = sessionStorage.getItem("token")
 			if (token) {
-				checkToken(token)
+				const user = JSON.parse(sessionStorage.getItem("user"))
+				checkToken(token, user)
 				store.dispatch("getEvent", to.params.id).then(event => {
 					to.params.eventData = event
 					next()
@@ -73,6 +88,16 @@ const routes = [
 		path: "/register",
 		name: "Register",
 		component: Register
+	},
+	{
+		path: "/confirm/:token",
+		name: "Confirm",
+		component: Confirm,
+		beforeEnter(to, from, next) {
+			store.dispatch("confirm", to.params.token).then(() => {
+				next()
+			})
+		}
 	},
 	{
 		path: "/",
@@ -91,7 +116,8 @@ const routes = [
 		beforeEnter(to, from, next) {
 			const token = sessionStorage.getItem("token")
 			if (token) {
-				checkToken(token)
+				const user = JSON.parse(sessionStorage.getItem("user"))
+				checkToken(token, user)
 				next()
 			} else {
 				store.state.routeMessage =
@@ -107,7 +133,8 @@ const routes = [
 		beforeEnter(to, from, next) {
 			const token = sessionStorage.getItem("token")
 			if (token) {
-				checkToken(token)
+				const user = JSON.parse(sessionStorage.getItem("user"))
+				checkToken(token, user)
 				store.dispatch("getUserCreatedEvents").then(() => {
 					store.dispatch("getUserEvents").then(() => {
 						next()
@@ -119,12 +146,32 @@ const routes = [
 				next({ name: "Login" })
 			}
 		}
+	},
+	{
+		path: "/not-found",
+		name: "NotFound",
+		component: ErrorPage,
+		props: true
+	},
+	{
+		path: "/network-error",
+		name: "NetworkError",
+		component: NetworkError
+	},
+	{
+		path: "*",
+		redirect: { name: "NotFound", params: { missing: "page" } }
 	}
 ]
 const router = new VueRouter({
 	mode: "history",
 	base: process.env.BASE_URL,
-	routes
+	routes,
+	scrollBehavior(to, from, savedPosition) {
+		if (savedPosition) {
+			return savedPosition
+		}
+	}
 })
 
 router.beforeEach((to, from, next) => {

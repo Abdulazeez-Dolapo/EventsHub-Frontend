@@ -7,4 +7,7 @@ export default {
 	login(formData) {
 		return Api().post("login", formData)
 	},
+	confirm(token) {
+		return Api().get(`confirm/${token}`)
+	}
 }

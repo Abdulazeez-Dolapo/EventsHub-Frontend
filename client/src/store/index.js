@@ -74,14 +74,24 @@ export default new Vuex.Store({
 			}
 		},
 
+		async confirm({ state }, token) {
+			try {
+				const response = await AuthenticationService.confirm(token)
+				console.log(response.data)
+			} catch (error) {
+				console.log(error)
+			}
+		},
+
 		async login({ state, commit }, userInfo) {
 			try {
 				const response = await AuthenticationService.login(userInfo)
 				commit("SET_USER", response.data)
 				sessionStorage.setItem("token", response.data.token)
+				sessionStorage.setItem("user", JSON.stringify(response.data.user))
 				this.dispatch("getUserEvents")
 
-				state.message = response.data.message
+				commit("SET_MESSAGE", response.data.error)
 				router.push({ name: "AllEvents" })
 			} catch (error) {
 				state.message = error.response.data.error
@@ -113,6 +123,7 @@ export default new Vuex.Store({
 		logout({ commit }) {
 			commit("LOG_OUT")
 			sessionStorage.removeItem("token")
+			sessionStorage.removeItem("user")
 		},
 
 		searchedEvents({ commit }, events) {
@@ -142,13 +153,8 @@ export default new Vuex.Store({
 		},
 
 		async getEvent({ state }, id) {
-			try {
-				const response = await EventService.getEvent(id)
-				return response.data.event
-			} catch (error) {
-				console.log(error)
-				state.message = error.response.data.error
-			}
+			const response = await EventService.getEvent(id)
+			return response.data.event
 		},
 
 		async editEvent({ commit }, data) {

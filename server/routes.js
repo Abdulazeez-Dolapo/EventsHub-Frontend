@@ -19,6 +19,8 @@ module.exports = (app) => {
 		Authentication.login
 	)
 
+	app.get("/confirm/:token", Authentication.confirmEmail)
+
 	app.post("/create-event", Authorise, Event.addEvent)
 
 	app.get("/get-events", Event.getEvents)

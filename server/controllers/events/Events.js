@@ -38,9 +38,15 @@ module.exports = {
 					event_id: req.params.id,
 				},
 			})
-			res.send({
-				event: event,
-			})
+			if (!event) {
+				return res.status(404).send({
+					error: "Event desn't exist",
+				})
+			} else {
+				res.send({
+					event: event,
+				})
+			}
 		} catch (error) {
 			console.log(error)
 			res.status(400).send({

@@ -9,7 +9,6 @@
 	</div>
 </template>
 <script>
-import jwt from "jsonwebtoken"
 import Header from "@/components/Header"
 
 export default {
@@ -19,9 +18,9 @@ export default {
 	created() {
 		const token = sessionStorage.getItem("token")
 		if (token) {
+			const user = JSON.parse(sessionStorage.getItem("user"))
 			this.$store.state.logInStatus = true
-			const decoded = jwt.verify(token, "secret")
-			this.$store.state.user = decoded
+			this.$store.state.user = user
 		} else {
 			this.$store.state.logInStatus = false
 		}

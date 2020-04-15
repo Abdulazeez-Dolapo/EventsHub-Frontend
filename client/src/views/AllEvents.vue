@@ -1,11 +1,16 @@
 <template>
 	<div class="all-events">
-		<div v-if="showError" class="search">
-			<p>
-				Oops! No result found
-			</p>
-		</div>
 		<div class="all-cards">
+			<div
+				class="card mt-5 mx-3"
+				style="margin-top: 5rem; position: absolute; width: 40%; text-align: center;"
+				v-if="showError"
+				id="search"
+			>
+				<p>
+					No result found
+				</p>
+			</div>
 			<div
 				v-for="event in pagedEvents"
 				:key="event.event_id"
@@ -28,7 +33,7 @@
 			</div>
 		</div>
 
-		<div class="nav">
+		<div class="nav" v-if="!showError">
 			<button :disabled="!showPrev" @click="prev">
 				<i class="fas fa-fast-backward"></i>
 			</button>
@@ -76,11 +81,12 @@ export default {
 			this.paginate()
 			this.paging()
 			this.page = 1
-			console.log(this.searchedEvents.length)
-			if (!this.searchedEvents.length) {
-				this.showError = true
-			} else {
-				this.showError = false
+			if (this.searchedEvents != null) {
+				if (this.searchedEvents.length <= 0) {
+					this.showError = true
+				} else {
+					this.showError = false
+				}
 			}
 		}
 	},
@@ -110,7 +116,6 @@ export default {
 				eventList = this.events
 			}
 			const pagedEvents = eventList.slice(start, end)
-			console.log(eventList)
 			this.pagedEvents = pagedEvents
 		},
 		next() {
@@ -119,6 +124,7 @@ export default {
 			this.page++
 			this.paginate(this.start, this.end)
 			this.scrollToTop()
+			// this.$router.push({ query: { start: this.start, end: this.end } })
 		},
 		prev() {
 			this.start = this.start - 5
@@ -143,7 +149,7 @@ export default {
 			}
 			console.log(maxPageNumber)
 			console.log(this.page)
-			if (!this.searchedEvents.length || maxPageNumber == 1) {
+			if (maxPageNumber == 1) {
 				this.showPrev = false
 				this.showNext = false
 			} else if (this.page == 1) {
@@ -161,12 +167,6 @@ export default {
 }
 </script>
 <style scoped>
-.all-events {
-	margin: 0;
-	min-height: 90vh;
-	background-color: blue;
-}
-
 .all-cards {
 	height: 90%;
 	width: 80%;
