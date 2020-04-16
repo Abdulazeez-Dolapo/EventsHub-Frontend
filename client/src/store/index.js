@@ -75,12 +75,8 @@ export default new Vuex.Store({
 		},
 
 		async confirm({ state }, token) {
-			try {
-				const response = await AuthenticationService.confirm(token)
-				console.log(response.data)
-			} catch (error) {
-				console.log(error)
-			}
+			const response = await AuthenticationService.confirm(token)
+			console.log(response.data)
 		},
 
 		async login({ state, commit }, userInfo) {

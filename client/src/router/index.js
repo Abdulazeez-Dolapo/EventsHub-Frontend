@@ -90,13 +90,21 @@ const routes = [
 		component: Register
 	},
 	{
-		path: "/confirm/:token",
+		path: "/confirmation/:token",
 		name: "Confirm",
 		component: Confirm,
+		props: true,
 		beforeEnter(to, from, next) {
-			store.dispatch("confirm", to.params.token).then(() => {
-				next()
-			})
+			store
+				.dispatch("confirm", to.params.token)
+				.then(() => {
+					next()
+				})
+				.catch(err => {
+					console.log(err)
+					to.params.error = true
+					next()
+				})
 		}
 	},
 	{

@@ -4,24 +4,6 @@ const config = require("../../config/config")
 const bcrypt = require("bcrypt")
 const nodemailer = require("nodemailer")
 
-// async function createAccount() {
-// 	let account = await nodemailer.createTestAccount()
-// 	return account
-// }
-
-// const testAccount = createAccount()
-// console.log(testAccount)
-
-// let transporter = nodemailer.createTransport({
-// 	host: "smtp.ethereal.email",
-// 	port: 587,
-// 	secure: false,
-// 	auth: {
-// 		user: testAccount.user,
-// 		pass: testAccount.pass,
-// 	},
-// })
-
 function generateToken(user) {
 	const expire = 60 * 60 * 24
 	return jwt.sign(user, config.jwt.secret, {
@@ -55,40 +37,23 @@ module.exports = {
 				const token = generateToken(payload)
 				const url = `http://localhost:8080/confirmation/${token}`
 
-				let testAccount = await nodemailer.createTestAccount()
-				console.log(testAccount)
-
 				let transporter = nodemailer.createTransport({
-					sendMail: true,
-					host: "smtp.ethereal.email",
-					port: 587,
+					service: "gmail",
 					secure: false,
+					port: 25,
 					auth: {
-						user: testAccount.user,
-						pass: testAccount.pass,
+						user: process.env.EMAIL,
+						pass: process.env.PASS,
 					},
-					debug: true,
-					logger: true,
+					tls: {
+						rejectUnauthorized: false,
+					},
 				})
 
-				// let transporter = nodemailer.createTransport({
-				// 	service: "gmail",
-				// 	secure: false,
-				// 	port: 25,
-				// 	auth: {
-				// 		user: process.env.EMAIL,
-				// 		pass: process.env.PASSWORD,
-				// 	},
-				// 	tls: {
-				// 		rejectUnauthorized: false,
-				// 	},
-				// })
-
 				const HelperOptions = {
-					from: "'Azeez Dolapo' <azeezdolapotest@gmail.com>",
+					from: "Azeez Dolapo <azeezdolapotest@gmail.com>",
 					to: req.body.email,
 					subject: "EventsHub account confirmation",
-					// text: `Hello`,
 					html: `Please click this link to confirm your account with us: <a href="${url}">${url}</a>`,
 				}
 
