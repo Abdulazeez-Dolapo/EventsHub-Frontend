@@ -23,8 +23,16 @@
 								type="text"
 								id="materialLoginFormEmail"
 								class="form-control"
+								:class="{ 'border-danger': $v.email.$error }"
+								@blur="$v.email.$touch()"
 							/>
 							<label for="materialLoginFormEmail">E-mail</label>
+							<div v-if="$v.email.$error" class="error">
+								<p v-if="!$v.email.email">Please enter a valid email</p>
+								<p v-if="!$v.email.required">
+									Email is required
+								</p>
+							</div>
 						</div>
 
 						<!-- Password -->
@@ -34,8 +42,15 @@
 								type="password"
 								id="materialLoginFormPassword"
 								class="form-control"
+								:class="{ 'border-danger': $v.password.$error }"
+								@blur="$v.password.$touch()"
 							/>
 							<label for="materialLoginFormPassword">Password</label>
+							<div v-if="$v.password.$error" class="error">
+								<p v-if="!$v.password.required">
+									Password is required
+								</p>
+							</div>
 						</div>
 
 						<div class="d-flex justify-content-around">
@@ -64,6 +79,7 @@
 						<button
 							class="btn btn-outline-info btn-rounded btn-block my-4 waves-effect z-depth-0"
 							type="submit"
+							:disabled="$v.$invalid"
 						>
 							Sign in
 						</button>
@@ -75,11 +91,13 @@
 						</p>
 					</form>
 					<!-- Form -->
-					<p v-if="message" class="error">
-						{{ message }}
-					</p>
+
 					<p v-if="routeMessage" class="error">
 						{{ routeMessage }}
+					</p>
+
+					<p v-if="message" class="error">
+						{{ message }}
 					</p>
 				</div>
 			</div>
@@ -89,6 +107,8 @@
 
 <script>
 import { mapState } from "vuex"
+import { required, email, maxLength } from "vuelidate/lib/validators"
+
 export default {
 	name: "Register",
 	data() {
@@ -97,22 +117,37 @@ export default {
 			password: "",
 		}
 	},
+	computed: {
+		...mapState(["routeMessage", "message"]),
+	},
 	created() {
 		this.$store.commit("SET_MESSAGE", null)
 	},
-	computed: {
-		...mapState(["message", "routeMessage"]),
+	validations: {
+		email: {
+			required,
+			email,
+			maxLength: maxLength(40),
+		},
+		password: {
+			required,
+		},
 	},
 	methods: {
 		async login() {
-			const userInfo = {
-				email: this.email,
-				password: this.password,
-			}
-			try {
-				await this.$store.dispatch("login", userInfo)
-			} catch (error) {
-				console.log(error)
+			this.$v.$touch()
+			if (!this.$v.$invalid) {
+				const userInfo = {
+					email: this.email,
+					password: this.password,
+				}
+				try {
+					await this.$store.dispatch("login", userInfo)
+				} catch (error) {
+					console.log(error)
+				}
+			} else {
+				return
 			}
 		},
 	},

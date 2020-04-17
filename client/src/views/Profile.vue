@@ -20,10 +20,10 @@
 			<div>
 				<ul style="cursor: pointer;">
 					<li @click="showEventsToAttend">
-						Events to Attend
+						Total events Created: {{ userCreatedEvents.length }}
 					</li>
 					<li @click="showEventsCreated">
-						Events You created
+						Total events Booked: {{ userEvents.length }}
 					</li>
 				</ul>
 			</div>

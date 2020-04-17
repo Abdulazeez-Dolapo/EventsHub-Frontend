@@ -2,7 +2,7 @@ const User = require("../../models/Users")
 const jwt = require("jsonwebtoken")
 const config = require("../../config/config")
 const bcrypt = require("bcrypt")
-const transporter = require("./confirmation-email")
+const transporter = require("./transporter")
 
 function generateToken(user) {
 	const expire = 60 * 60 * 24
