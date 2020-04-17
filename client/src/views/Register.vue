@@ -34,7 +34,7 @@
 								<!-- Last name -->
 								<div class="md-form">
 									<input
-										type="email"
+										type="text"
 										id="materialRegisterFormLastName"
 										class="form-control"
 										v-model="lastName"
@@ -139,13 +139,16 @@ export default {
 			lastName: "",
 			email: "",
 			password: "",
-			confirmPassword: ""
+			confirmPassword: "",
 		}
+	},
+	created() {
+		this.$store.commit("SET_MESSAGE", null)
 	},
 	computed: {
 		error() {
 			return this.$store.state.message
-		}
+		},
 	},
 	methods: {
 		async register() {
@@ -158,15 +161,15 @@ export default {
 				last_name: this.lastName,
 				email: this.email,
 				password: this.password,
-				user_id: id
+				user_id: id,
 			}
 			try {
 				await this.$store.dispatch("register", userInfo)
 			} catch (error) {
 				console.log(error)
 			}
-		}
-	}
+		},
+	},
 }
 </script>
 

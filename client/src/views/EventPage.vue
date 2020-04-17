@@ -18,19 +18,26 @@
 						{{ event.category }}
 					</p>
 					<p>{{ event.number_attending }} attending</p>
+					<p>
+						{{ max }}
+					</p>
 				</div>
-				<button class="btn btn-primary" v-if="logInStatus" @click="attend">
+				<button
+					:disabled="max"
+					class="btn btn-primary"
+					v-if="logInStatus && !display"
+					@click="attend"
+				>
 					Attend Event
 				</button>
 
-				<button class="btn btn-primary" v-if="logInStatus" @click="cancel">
+				<button
+					class="btn btn-primary"
+					v-if="logInStatus && display"
+					@click="cancel"
+				>
 					Cancel attendance
 				</button>
-			</div>
-			<div>
-				<p v-if="message">
-					{{ message }}
-				</p>
 			</div>
 		</div>
 	</div>
@@ -40,22 +47,38 @@
 import { mapState } from "vuex"
 export default {
 	created() {
-		this.clearMessage()
+		this.display = this.displayButton()
+	},
+	updated() {
+		this.maxGuest()
+		this.display = this.displayButton()
 	},
 	props: {
-		event: {
+		sentEvent: {
 			type: Object,
-			required: true
-		}
+			required: true,
+		},
 	},
 	data() {
-		return {}
+		return {
+			display: "",
+			event: this.sentEvent,
+		}
 	},
 	computed: {
-		...mapState(["logInStatus", "newEvent", "user", "userEvents", "message"]),
+		...mapState([
+			"logInStatus",
+			"newEvent",
+			"user",
+			"userEvents",
+			"displayNotification",
+		]),
 		formattedDate() {
 			return this.formatDate(this.event.date)
-		}
+		},
+		max() {
+			return this.maxGuest()
+		},
 	},
 	methods: {
 		formatDate(date) {
@@ -63,19 +86,36 @@ export default {
 			const formattedDate = dateToFormat.toLocaleString(["en-us"], {
 				month: "long",
 				day: "2-digit",
-				year: "numeric"
+				year: "numeric",
 			})
 
 			return formattedDate
 		},
-		async attend() {
+		maxGuest() {
+			if (this.event.number_attending == this.event.max_guests) {
+				return "maximum attendance reached"
+			}
+		},
+		checkAttendance(userEvents) {
 			let eventArray = []
 
-			if (this.userEvents) {
-				this.userEvents.forEach(element => {
+			if (userEvents) {
+				userEvents.forEach((element) => {
 					eventArray.push(element.event_id)
 				})
 			}
+			return eventArray
+		},
+		displayButton() {
+			const eventArray = this.checkAttendance(this.userEvents)
+			if (eventArray.includes(this.event.event_id)) {
+				return true
+			} else {
+				return false
+			}
+		},
+		async attend() {
+			const eventArray = this.checkAttendance(this.userEvents)
 
 			if (eventArray.includes(this.event.event_id)) {
 				this.$store.commit(
@@ -90,40 +130,52 @@ export default {
 					organiser_id: this.event.organiser_id,
 					guest_first_name: this.user.first_name,
 					guest_last_name: this.user.last_name,
-					guest_user_id: this.user.user_id
+					guest_user_id: this.user.user_id,
 				}
 				await this.$store.dispatch("markAttendance", data)
 				this.event = this.newEvent
-				this.clearMessage()
 			}
 		},
 		async cancel() {
-			if (window.confirm("Are you sure you want to cancel?")) {
-				try {
-					const info = {
-						event_id: this.event.event_id,
-						guest_user_id: this.user.user_id
+			const eventArray = this.checkAttendance(this.userEvents)
+
+			if (eventArray.includes(this.event.event_id)) {
+				if (window.confirm("Are you sure you want to cancel?")) {
+					try {
+						const info = {
+							event_id: this.event.event_id,
+							guest_user_id: this.user.user_id,
+						}
+						await this.$store.dispatch("cancelAttendance", info)
+						this.event = this.newEvent
+						this.$store.commit(
+							"SET_MESSAGE",
+							"You have successfully canceled your attendance at this event"
+						)
+					} catch (error) {
+						console.log(error)
 					}
-					await this.$store.dispatch("cancelAttendance", info)
-					this.event = this.newEvent
-					this.$store.commit(
-						"SET_MESSAGE",
-						"You have successfully canceled your attendance at this event"
-					)
-					this.clearMessage()
-				} catch (error) {
-					console.log(error)
+				} else {
+					return
 				}
 			} else {
+				this.$store.commit(
+					"SET_MESSAGE",
+					"You have'nt marked your attendance at this event"
+				)
 				return
 			}
 		},
-		clearMessage() {
-			setTimeout(() => {
-				this.$store.state.message = null
-			}, 3000)
+	},
+	beforeRouteLeave(to, from, next) {
+		this.$store.commit("SET_MESSAGE", null)
+		if (to.name == "AllEvents") {
+			next()
+		} else {
+			this.$store.dispatch("savePageInfo", null)
+			next()
 		}
-	}
+	},
 }
 </script>
 
@@ -134,5 +186,17 @@ export default {
 	margin-left: 10rem;
 	margin-bottom: 4rem;
 	padding: 1rem;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+	transition-duration: 0.2s;
+	transition-property: opacity;
+	transition-timing-function: ease;
+}
+
+.fade-enter,
+.fade-leave-active {
+	opacity: 0;
 }
 </style>

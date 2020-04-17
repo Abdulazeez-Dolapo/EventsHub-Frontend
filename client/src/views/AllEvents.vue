@@ -51,24 +51,30 @@ import { mapState } from "vuex"
 export default {
 	name: "AllEvents",
 	props: {
-		events: {
+		sentEvents: {
 			type: Array,
-			required: true
-		}
+			required: true,
+		},
 	},
 	created() {
+		if (this.savedEnd && this.savedStart && this.savedPage) {
+			this.start = this.savedStart
+			this.end = this.savedEnd
+			this.page = this.savedPage
+		}
 		this.showPrev = false
-		this.paginate()
+		this.paginate(this.start, this.end)
 	},
 	data() {
 		return {
+			events: this.sentEvents,
 			pagedEvents: null,
 			page: 1,
 			start: 0,
 			end: 5,
 			showPrev: true,
 			showNext: true,
-			showError: false
+			showError: false,
 		}
 	},
 	watch: {
@@ -88,27 +94,33 @@ export default {
 					this.showError = false
 				}
 			}
-		}
+		},
 	},
 	computed: {
-		...mapState(["logInStatus", "searchedEvents"]),
+		...mapState([
+			"logInStatus",
+			"searchedEvents",
+			"savedPage",
+			"savedStart",
+			"savedEnd",
+		]),
 		formattedDate() {
 			for (const event of this.events) {
 				const date = new Date(event.date)
 				const formattedDate = date.toLocaleString(["en-us"], {
 					month: "long",
 					day: "2-digit",
-					year: "numeric"
+					year: "numeric",
 				})
 				return formattedDate
 			}
-		}
+		},
 	},
 	methods: {
 		viewEvent(id) {
 			this.$router.push({ path: `event/${id}` })
 		},
-		paginate(start = 0, end = 5) {
+		paginate(start, end) {
 			let eventList
 			if (this.searchedEvents) {
 				eventList = this.searchedEvents
@@ -124,7 +136,6 @@ export default {
 			this.page++
 			this.paginate(this.start, this.end)
 			this.scrollToTop()
-			// this.$router.push({ query: { start: this.start, end: this.end } })
 		},
 		prev() {
 			this.start = this.start - 5
@@ -137,7 +148,7 @@ export default {
 			window.scroll({
 				top: 0,
 				left: 0,
-				behavior: "smooth"
+				behavior: "smooth",
 			})
 		},
 		paging() {
@@ -162,8 +173,20 @@ export default {
 				this.showPrev = true
 				this.showNext = true
 			}
+		},
+	},
+	beforeRouteLeave(to, from, next) {
+		if (to.name == "Event") {
+			const info = {
+				start: this.start,
+				end: this.end,
+				page: this.page,
+			}
+			this.$store.dispatch("savePageInfo", info)
+			next()
 		}
-	}
+		next()
+	},
 }
 </script>
 <style scoped>

@@ -5,15 +5,26 @@
 			<transition name="fade" mode="out-in">
 				<router-view />
 			</transition>
+			<transition name="fade" appear>
+				<div class="notification" v-if="displayNotification">
+					<Notification />
+				</div>
+			</transition>
 		</div>
 	</div>
 </template>
 <script>
 import Header from "@/components/Header"
+import Notification from "@/components/Notification"
+import { mapState } from "vuex"
 
 export default {
 	components: {
-		Header
+		Header,
+		Notification,
+	},
+	computed: {
+		...mapState(["displayNotification"]),
 	},
 	created() {
 		const token = sessionStorage.getItem("token")
@@ -24,7 +35,7 @@ export default {
 		} else {
 			this.$store.state.logInStatus = false
 		}
-	}
+	},
 }
 </script>
 <style scoped>

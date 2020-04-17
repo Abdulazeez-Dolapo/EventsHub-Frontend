@@ -2,7 +2,7 @@ const User = require("../../models/Users")
 const jwt = require("jsonwebtoken")
 const config = require("../../config/config")
 const bcrypt = require("bcrypt")
-const nodemailer = require("nodemailer")
+const transporter = require("./confirmation-email")
 
 function generateToken(user) {
 	const expire = 60 * 60 * 24
@@ -37,19 +37,6 @@ module.exports = {
 				const token = generateToken(payload)
 				const url = `http://localhost:8080/confirmation/${token}`
 
-				let transporter = nodemailer.createTransport({
-					service: "gmail",
-					secure: false,
-					port: 25,
-					auth: {
-						user: process.env.EMAIL,
-						pass: process.env.PASS,
-					},
-					tls: {
-						rejectUnauthorized: false,
-					},
-				})
-
 				const HelperOptions = {
 					from: "Azeez Dolapo <azeezdolapotest@gmail.com>",
 					to: req.body.email,
@@ -57,18 +44,35 @@ module.exports = {
 					html: `Please click this link to confirm your account with us: <a href="${url}">${url}</a>`,
 				}
 
-				let info = await transporter.sendMail(HelperOptions)
-				console.log(info)
-
-				res.status(200).json({
-					message:
-						"Please check your email for a confirmation link before proceeding",
-				})
+				transporter
+					.sendMail(HelperOptions)
+					.then((info) => {
+						res.status(200).json({
+							message:
+								"Please check your email for a confirmation link before proceeding",
+						})
+						console.log(info)
+						return
+					})
+					.catch((err) => {
+						User.destroy({
+							where: {
+								user_id: userJson.user_id,
+							},
+						})
+						res.status(400).send({
+							error:
+								"There was an error creating your account. Please try again.",
+						})
+						console.log(err)
+						return
+					})
 			}
 		} catch (error) {
 			console.log(error)
 			res.status(400).send({
-				error: "There was an error creating your account",
+				error:
+					"There was an error creating your account. Please try again.",
 			})
 		}
 	},

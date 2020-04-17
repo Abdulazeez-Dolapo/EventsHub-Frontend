@@ -24,7 +24,7 @@
 											:input-class="[
 												'browser-default',
 												'custom-select',
-												'mb-4'
+												'mb-4',
 											]"
 										/>
 									</div>
@@ -138,17 +138,20 @@ import moment from "moment"
 import { mapState } from "vuex"
 
 export default {
+	created() {
+		this.$store.commit("SET_MESSAGE", null)
+	},
 	props: {
 		eventData: {
 			type: Object,
-			required: true
-		}
+			required: true,
+		},
 	},
 	components: {
-		Datepicker
+		Datepicker,
 	},
 	computed: {
-		...mapState(["categories"])
+		...mapState(["categories"]),
 	},
 	data() {
 		const times = []
@@ -164,7 +167,7 @@ export default {
 			error: null,
 			times,
 			event: this.editEventData(),
-			submitted: false
+			submitted: false,
 		}
 	},
 	methods: {
@@ -177,7 +180,7 @@ export default {
 				location: this.eventData.location,
 				time: this.eventData.time,
 				date: this.eventData.date,
-				max_guests: this.eventData.max_guests
+				max_guests: this.eventData.max_guests,
 			}
 		},
 		customFormatter(date) {
@@ -198,7 +201,7 @@ export default {
 			} else {
 				return
 			}
-		}
+		},
 	},
 	beforeRouteLeave(to, from, next) {
 		if (!this.submitted) {
@@ -214,7 +217,7 @@ export default {
 		} else {
 			next()
 		}
-	}
+	},
 }
 </script>
 

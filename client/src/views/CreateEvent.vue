@@ -27,7 +27,7 @@
 										:input-class="[
 											'browser-default',
 											'custom-select',
-											'mb-4'
+											'mb-4',
 										]"
 									/>
 								</div>
@@ -116,9 +116,9 @@
 						</button>
 					</form>
 
-					<p v-if="error" class="error">
+					<!-- <p v-if="error" class="error">
 						{{ error }}
-					</p>
+					</p> -->
 				</div>
 			</div>
 		</div>
@@ -130,9 +130,12 @@ import Datepicker from "vuejs-datepicker"
 import moment from "moment"
 
 export default {
+	created() {
+		this.$store.commit("SET_MESSAGE", null, false)
+	},
 	name: "Register",
 	components: {
-		Datepicker
+		Datepicker,
 	},
 	data() {
 		const times = []
@@ -148,13 +151,10 @@ export default {
 			categories: this.$store.state.categories,
 			times,
 			event: this.createEventData(),
-			submitted: false
+			submitted: false,
 		}
 	},
 	computed: {
-		error() {
-			return this.$store.state.message
-		},
 		organiserId() {
 			return this.$store.state.user[0]["user_id"]
 		},
@@ -164,7 +164,7 @@ export default {
 				" " +
 				this.$store.state.user[0]["last_name"]
 			)
-		}
+		},
 	},
 	methods: {
 		customFormatter(date) {
@@ -186,7 +186,7 @@ export default {
 				location: "",
 				time: "",
 				date: "",
-				max_guests: ""
+				max_guests: "",
 			}
 		},
 		async createEvent() {
@@ -197,7 +197,7 @@ export default {
 			} catch (error) {
 				console.log(error)
 			}
-		}
+		},
 	},
 	beforeRouteLeave(to, from, next) {
 		if (!this.submitted) {
@@ -213,7 +213,7 @@ export default {
 		} else {
 			next()
 		}
-	}
+	},
 }
 </script>
 

@@ -1,9 +1,6 @@
 <template>
 	<div class="profile">
 		<div class="left">
-			<div v-if="messageAlert" class="notification">
-				{{ messageAlert }}
-			</div>
 			<h2 style="text-align: center;">
 				PROFILE
 			</h2>
@@ -37,6 +34,10 @@
 				<h2 style="text-align: center;">
 					EVENTS YOU CREATED
 				</h2>
+				<div v-if="!userCreatedEvents.length">
+					You have not created any events. Click on this
+					<router-link to="/create-event">link</router-link> to create one
+				</div>
 				<div
 					style="width: 100%;"
 					v-for="event in userCreatedEvents"
@@ -56,6 +57,10 @@
 				<h2 style="text-align: center;">
 					EVENTS TO ATTEND
 				</h2>
+				<div v-if="!userEvents.length">
+					You have not booked any events. Click on this
+					<router-link to="/events">link</router-link> to book one
+				</div>
 				<ul
 					style="cursor: pointer;"
 					v-for="event in userEvents"
@@ -74,18 +79,14 @@
 import { mapState } from "vuex"
 
 export default {
-	created() {
-		this.clearMessage()
-	},
 	computed: {
-		...mapState(["user", "userEvents", "userCreatedEvents"])
+		...mapState(["user", "userEvents", "userCreatedEvents"]),
 	},
 	data() {
 		return {
 			show: false,
 			showCreated: false,
 			showAttendance: false,
-			messageAlert: this.$store.state.message
 		}
 	},
 	methods: {
@@ -105,13 +106,10 @@ export default {
 		edit(id) {
 			this.$router.push(`edit-event/${id}`)
 		},
-		clearMessage() {
-			setTimeout(() => {
-				this.messageAlert = null
-				this.$store.state.message = null
-			}, 2000)
-		}
-	}
+	},
+	beforeDestroy() {
+		this.$store.commit("SET_MESSAGE", null)
+	},
 }
 </script>
 

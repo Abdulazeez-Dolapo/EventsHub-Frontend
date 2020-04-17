@@ -94,29 +94,32 @@ export default {
 	data() {
 		return {
 			email: "",
-			password: ""
+			password: "",
 		}
 	},
+	created() {
+		this.$store.commit("SET_MESSAGE", null)
+	},
 	computed: {
-		...mapState(["message", "routeMessage"])
+		...mapState(["message", "routeMessage"]),
 	},
 	methods: {
 		async login() {
 			const userInfo = {
 				email: this.email,
-				password: this.password
+				password: this.password,
 			}
 			try {
 				await this.$store.dispatch("login", userInfo)
 			} catch (error) {
 				console.log(error)
 			}
-		}
+		},
 	},
 	beforeRouteLeave(to, from, next) {
 		this.$store.state.routeMessage = null
 		next()
-	}
+	},
 }
 </script>
 

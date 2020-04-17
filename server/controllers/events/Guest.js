@@ -10,7 +10,7 @@ module.exports = {
 				},
 			})
 
-			if (event.number_attending >= event.max_guests) {
+			if (Number(event.number_attending) >= Number(event.max_guests)) {
 				res.send({
 					message: "Sorry! This event has reached it's maximum limit",
 				})

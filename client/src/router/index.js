@@ -4,7 +4,7 @@ import Home from "../views/Home.vue"
 import AllEvents from "../views/AllEvents.vue"
 import EventPage from "../views/EventPage.vue"
 import Register from "../views/Register.vue"
-import Confirm from "../views/Confirm.vue"
+import EmailConfirmation from "../views/EmailConfirmation.vue"
 import Login from "../views/Login.vue"
 import CreateEvent from "../views/CreateEvent.vue"
 import EditEvent from "../views/EditEvent.vue"
@@ -15,8 +15,10 @@ import Nprogress from "nprogress"
 import store from "@/store"
 
 function checkToken(token, user) {
-	store.state.logInStatus = true
-	store.state.user = user
+	if (token) {
+		store.state.logInStatus = true
+		store.state.user = user
+	}
 }
 
 Vue.use(VueRouter)
@@ -28,11 +30,11 @@ const routes = [
 		component: AllEvents,
 		props: true,
 		beforeEnter(to, from, next) {
-			store.dispatch("getEvents").then(events => {
-				to.params.events = events
+			store.dispatch("getEvents").then((events) => {
+				to.params.sentEvents = events
 				next()
 			})
-		}
+		},
 	},
 	{
 		path: "/event/:id",
@@ -42,26 +44,26 @@ const routes = [
 		beforeEnter(to, from, next) {
 			store
 				.dispatch("getEvent", to.params.id)
-				.then(event => {
-					to.params.event = event
+				.then((event) => {
+					to.params.sentEvent = event
 					store.dispatch("getUserEvents").then(() => {
 						store.dispatch("getUserCreatedEvents").then(() => {
 							next()
 						})
 					})
 				})
-				.catch(error => {
+				.catch((error) => {
 					console.log(error)
 					if (error.response && error.response.status == "404") {
 						next({
 							name: "NotFound",
-							params: { missing: "event" }
+							params: { missing: "event" },
 						})
 					} else {
 						next({ name: "NetworkError" })
 					}
 				})
-		}
+		},
 	},
 	{
 		path: "/edit-event/:id",
@@ -73,7 +75,7 @@ const routes = [
 			if (token) {
 				const user = JSON.parse(sessionStorage.getItem("user"))
 				checkToken(token, user)
-				store.dispatch("getEvent", to.params.id).then(event => {
+				store.dispatch("getEvent", to.params.id).then((event) => {
 					to.params.eventData = event
 					next()
 				})
@@ -82,17 +84,21 @@ const routes = [
 					"You have to be logged in before you can Edit an event"
 				next({ name: "Login" })
 			}
-		}
+		},
 	},
 	{
 		path: "/register",
 		name: "Register",
-		component: Register
+		component: Register,
+		beforeEnter(to, from, next) {
+			store.dispatch("logout")
+			next()
+		},
 	},
 	{
 		path: "/confirmation/:token",
-		name: "Confirm",
-		component: Confirm,
+		name: "EmailConfirmation",
+		component: EmailConfirmation,
 		props: true,
 		beforeEnter(to, from, next) {
 			store
@@ -100,22 +106,26 @@ const routes = [
 				.then(() => {
 					next()
 				})
-				.catch(err => {
+				.catch((err) => {
 					console.log(err)
 					to.params.error = true
 					next()
 				})
-		}
+		},
 	},
 	{
 		path: "/",
 		name: "Home",
-		component: Home
+		component: Home,
 	},
 	{
 		path: "/login",
 		name: "Login",
-		component: Login
+		component: Login,
+		beforeEnter(to, from, next) {
+			store.dispatch("logout")
+			next()
+		},
 	},
 	{
 		path: "/create-event",
@@ -132,7 +142,7 @@ const routes = [
 					"You have to be logged in before you can create an event"
 				next({ name: "Login" })
 			}
-		}
+		},
 	},
 	{
 		path: "/profile",
@@ -153,23 +163,23 @@ const routes = [
 					"You have to be logged in to view this page"
 				next({ name: "Login" })
 			}
-		}
+		},
 	},
 	{
 		path: "/not-found",
 		name: "NotFound",
 		component: ErrorPage,
-		props: true
+		props: true,
 	},
 	{
 		path: "/network-error",
 		name: "NetworkError",
-		component: NetworkError
+		component: NetworkError,
 	},
 	{
 		path: "*",
-		redirect: { name: "NotFound", params: { missing: "page" } }
-	}
+		redirect: { name: "NotFound", params: { missing: "page" } },
+	},
 ]
 const router = new VueRouter({
 	mode: "history",
@@ -179,7 +189,7 @@ const router = new VueRouter({
 		if (savedPosition) {
 			return savedPosition
 		}
-	}
+	},
 })
 
 router.beforeEach((to, from, next) => {

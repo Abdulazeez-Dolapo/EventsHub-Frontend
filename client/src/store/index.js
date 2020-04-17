@@ -8,6 +8,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
+		savedPage: null,
+		savedStart: null,
+		savedEnd: null,
 		routeMessage: null,
 		newEvent: null,
 		user: null,
@@ -17,6 +20,7 @@ export default new Vuex.Store({
 		searchedEvents: [],
 		userEvents: null,
 		userCreatedEvents: null,
+		displayNotification: false,
 		categories: [
 			"Wedding",
 			"Anniversary",
@@ -25,8 +29,8 @@ export default new Vuex.Store({
 			"Convocation",
 			"hackathon",
 			"Meeting",
-			"Conference"
-		]
+			"Conference",
+		],
 	},
 	mutations: {
 		SET_USER(state, userInfo) {
@@ -54,14 +58,31 @@ export default new Vuex.Store({
 			state.userCreatedEvents = null
 		},
 		SET_MESSAGE(state, message) {
-			state.message = message
+			if (message) {
+				state.message = message
+				state.displayNotification = true
+			} else {
+				state.message = null
+				state.displayNotification = false
+			}
 		},
 		GET_EVENT(state, event) {
 			state.newEvent = event
 		},
 		SEARCHED_EVENTS(state, events) {
 			state.searchedEvents = events
-		}
+		},
+		SET_PAGE_INFO(state, info) {
+			if (info) {
+				state.savedEnd = info.end
+				state.savedStart = info.start
+				state.savedPage = info.page
+			} else {
+				state.savedEnd = null
+				state.savedStart = null
+				state.savedPage = null
+			}
+		},
 	},
 	actions: {
 		async register({ state, commit }, userInfo) {
@@ -79,13 +100,13 @@ export default new Vuex.Store({
 			console.log(response.data)
 		},
 
-		async login({ state, commit }, userInfo) {
+		async login({ state, commit, dispatch }, userInfo) {
 			try {
 				const response = await AuthenticationService.login(userInfo)
 				commit("SET_USER", response.data)
 				sessionStorage.setItem("token", response.data.token)
 				sessionStorage.setItem("user", JSON.stringify(response.data.user))
-				this.dispatch("getUserEvents")
+				dispatch("getUserEvents")
 
 				commit("SET_MESSAGE", response.data.error)
 				router.push({ name: "AllEvents" })
@@ -133,7 +154,7 @@ export default new Vuex.Store({
 				commit("SET_MESSAGE", response.data.message)
 				router.push(`/event/${id}`)
 			} catch (error) {
-				state.message = error.response.data.error
+				commit("SET_MESSAGE", error.response.data.error)
 			}
 		},
 
@@ -179,7 +200,7 @@ export default new Vuex.Store({
 
 				const eventData = {
 					number: response.data.number,
-					id: info.event_id
+					id: info.event_id,
 				}
 
 				const event = await EventService.updateEventAttendance(eventData)
@@ -203,12 +224,12 @@ export default new Vuex.Store({
 
 				const info = {
 					number: response.data.number,
-					id: eventData.event_id
+					id: eventData.event_id,
 				}
 				const event = await EventService.updateEventAttendance(info)
 				commit("GET_EVENT", event.data.data)
 
-				const newArray = state.userEvents.filter(element => {
+				const newArray = state.userEvents.filter((element) => {
 					if (element.event_id != state.newEvent.event_id) {
 						return element
 					}
@@ -218,8 +239,11 @@ export default new Vuex.Store({
 				console.log(error)
 				commit("SET_MESSAGE", error)
 			}
-		}
+		},
+		savePageInfo({ commit }, info) {
+			commit("SET_PAGE_INFO", info)
+		},
 	},
 	getters: {},
-	modules: {}
+	modules: {},
 })
