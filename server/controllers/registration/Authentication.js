@@ -46,7 +46,7 @@ module.exports = {
 
 				transporter
 					.sendMail(HelperOptions)
-					.then((info) => {
+					.then(info => {
 						res.status(200).json({
 							message:
 								"Please check your email for a confirmation link before proceeding",
@@ -54,7 +54,7 @@ module.exports = {
 						console.log(info)
 						return
 					})
-					.catch((err) => {
+					.catch(err => {
 						User.destroy({
 							where: {
 								user_id: userJson.user_id,
@@ -92,14 +92,14 @@ module.exports = {
 				})
 			}
 
-			if (!user.confirmed) {
-				return res.status(403).send({
-					error: "Please confirm your email before proceeding",
-				})
-			}
-
 			const checkPassword = bcrypt.compareSync(password, user.password)
-			if (!checkPassword) {
+			if (checkPassword) {
+				if (!user.confirmed) {
+					return res.status(403).send({
+						error: "Please confirm your email before proceeding",
+					})
+				}
+			} else {
 				return res.status(403).send({
 					error: "Invalid login details",
 				})

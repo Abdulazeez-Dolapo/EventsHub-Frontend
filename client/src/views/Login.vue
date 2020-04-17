@@ -1,7 +1,7 @@
 <template>
 	<div class="login">
 		<div class="form">
-			<div class="card" style="border: none;">
+			<div class="card" style="border: solid 1px  #17a2bb;">
 				<h5
 					class="card-header info-color white-text text-center py-3 mb-3"
 					style="background-color: #17a2bb; color: white"
@@ -13,8 +13,7 @@
 					<form
 						@submit.prevent="login"
 						class="text-center"
-						style="color: #757575;"
-						action="#!"
+						style="color: #757575; "
 					>
 						<!-- Email -->
 						<div class="md-form">
@@ -143,6 +142,7 @@ export default {
 				}
 				try {
 					await this.$store.dispatch("login", userInfo)
+					this.password = null
 				} catch (error) {
 					console.log(error)
 				}
@@ -169,8 +169,7 @@ export default {
 .form {
 	width: 35%;
 	margin: 0 30%;
-	margin-top: 5%;
-	position: absolute;
+	margin-top: 10%;
 }
 
 button:hover {

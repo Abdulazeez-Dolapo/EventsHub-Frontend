@@ -27,15 +27,25 @@
 										:input-class="[
 											'browser-default',
 											'custom-select',
-											'mb-4',
+											'mb-2',
+											{ 'border-danger': $v.event.date.$error },
 										]"
+										@opened="$v.event.date.$touch()"
 									/>
 								</div>
+								<div v-if="$v.event.date.$error" class="error">
+									<p v-if="!$v.event.date.required">
+										Date is required
+									</p>
+								</div>
 							</div>
+
 							<div class="col">
 								<div class="md-form">
 									<select
-										class="browser-default custom-select mb-4"
+										class="browser-default custom-select mb-2"
+										:class="{ 'border-danger': $v.event.time.$error }"
+										@blur="$v.event.time.$touch()"
 										v-model="event.time"
 										id="time"
 									>
@@ -49,11 +59,18 @@
 										</option>
 									</select>
 								</div>
+								<div v-if="$v.event.time.$error" class="error">
+									<p v-if="!$v.event.time.required">
+										Time is required
+									</p>
+								</div>
 							</div>
 						</div>
 
 						<select
-							class="browser-default custom-select mb-4"
+							class="browser-default custom-select mb-2"
+							:class="{ 'border-danger': $v.event.category.$error }"
+							@blur="$v.event.category.$touch()"
 							v-model="event.category"
 						>
 							<option value="" disabled>Choose category</option>
@@ -61,25 +78,64 @@
 								{{ cat }}
 							</option>
 						</select>
+						<div v-if="$v.event.category.$error" class="error">
+							<p v-if="!$v.event.category.required">
+								Category is required
+							</p>
+						</div>
 
 						<div class="md-form mt-0">
 							<input
 								placeholder="Title"
 								type="text"
 								id="title"
-								class="form-control"
+								class="form-control mb-2"
 								v-model="event.title"
+								:class="{ 'border-danger': $v.event.title.$error }"
+								@blur="$v.event.title.$touch()"
 							/>
+
+							<div v-if="$v.event.title.$error" class="error">
+								<p v-if="!$v.event.title.required">
+									Title is required
+								</p>
+								<p
+									v-if="
+										!$v.event.title.minLength ||
+											!$v.event.title.maxLength
+									"
+								>
+									Title should not be less than 5 characters
+								</p>
+							</div>
 						</div>
 
 						<div class="md-form mt-3">
 							<textarea
 								placeholder="Description"
 								id="description"
-								class="form-control md-textarea"
+								class="form-control md-textarea mb-2"
 								rows="3"
 								v-model="event.description"
+								:class="{
+									'border-danger': $v.event.description.$error,
+								}"
+								@blur="$v.event.description.$touch()"
 							></textarea>
+
+							<div v-if="$v.event.description.$error" class="error">
+								<p v-if="!$v.event.description.required">
+									Description is required
+								</p>
+								<p
+									v-if="
+										!$v.event.description.minLength ||
+											!$v.event.description.maxLength
+									"
+								>
+									Description should be between 5 and 500 characters
+								</p>
+							</div>
 						</div>
 
 						<div class="form-row mt-3">
@@ -91,8 +147,26 @@
 										class="form-control"
 										aria-describedby="location"
 										v-model="event.location"
+										:class="{
+											'border-danger': $v.event.location.$error,
+										}"
+										@blur="$v.event.location.$touch()"
 									/>
 									<label for="location">Location</label>
+
+									<div v-if="$v.event.location.$error" class="error">
+										<p v-if="!$v.event.location.required">
+											Location is required
+										</p>
+										<p
+											v-if="
+												!$v.event.location.minLength ||
+													!$v.event.location.maxLength
+											"
+										>
+											Location should not be less than 3 characters
+										</p>
+									</div>
 								</div>
 							</div>
 							<div class="col">
@@ -103,22 +177,34 @@
 										class="form-control"
 										aria-describedby="number"
 										v-model.number="event.max_guests"
+										:class="{
+											'border-danger': $v.event.max_guests.$error,
+										}"
+										@blur="$v.event.max_guests.$touch()"
 									/>
 									<label for="number">Maximum number of guests</label>
+
+									<div v-if="$v.event.max_guests.$error" class="error">
+										<p
+											v-if="
+												!$v.event.max_guests.required ||
+													!$v.event.max_guests.integer
+											"
+										>
+											Number is required
+										</p>
+									</div>
 								</div>
 							</div>
 						</div>
 						<button
 							class="btn btn-outline-info btn-rounded btn-block my-2 waves-effect z-depth-0"
 							type="submit"
+							:disabled="$v.$invalid"
 						>
 							Create Event
 						</button>
 					</form>
-
-					<!-- <p v-if="error" class="error">
-						{{ error }}
-					</p> -->
 				</div>
 			</div>
 		</div>
@@ -128,6 +214,12 @@
 <script>
 import Datepicker from "vuejs-datepicker"
 import moment from "moment"
+import {
+	required,
+	minLength,
+	maxLength,
+	integer,
+} from "vuelidate/lib/validators"
 
 export default {
 	created() {
@@ -154,6 +246,29 @@ export default {
 			submitted: false,
 		}
 	},
+	validations: {
+		event: {
+			title: {
+				required,
+				minLength: minLength(5),
+				maxLength: maxLength(50),
+			},
+			category: { required },
+			description: {
+				required,
+				minLength: minLength(5),
+				maxLength: maxLength(500),
+			},
+			location: {
+				required,
+				minLength: minLength(3),
+				maxLength: maxLength(100),
+			},
+			time: { required },
+			date: { required },
+			max_guests: { required, integer },
+		},
+	},
 	computed: {
 		organiserId() {
 			return this.$store.state.user[0]["user_id"]
@@ -178,22 +293,27 @@ export default {
 				title: "",
 				category: "",
 				description: "",
+				location: "",
+				time: "",
+				date: "",
+				max_guests: "",
 				organiser_id: this.$store.state.user["user_id"],
 				organiser_name:
 					this.$store.state.user["first_name"] +
 					" " +
 					this.$store.state.user["last_name"],
-				location: "",
-				time: "",
-				date: "",
-				max_guests: "",
 			}
 		},
 		async createEvent() {
 			try {
-				this.submitted = true
-				await this.$store.dispatch("createEvent", this.event)
-				this.event = this.createEventData()
+				this.$v.$touch()
+				if (!this.$v.$invalid) {
+					this.submitted = true
+					await this.$store.dispatch("createEvent", this.event)
+					this.event = this.createEventData()
+				} else {
+					return
+				}
 			} catch (error) {
 				console.log(error)
 			}

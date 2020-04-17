@@ -70,7 +70,23 @@
 									id="title"
 									class="form-control"
 									v-model="event.title"
+									:class="{ 'border-danger': $v.event.title.$error }"
+									@blur="$v.event.title.$touch()"
 								/>
+
+								<div v-if="$v.event.title.$error" class="error">
+									<p v-if="!$v.event.title.required">
+										Title is required
+									</p>
+									<p
+										v-if="
+											!$v.event.title.minLength ||
+												!$v.event.title.maxLength
+										"
+									>
+										Title should not be less than 5 characters
+									</p>
+								</div>
 							</div>
 
 							<div class="md-form mt-3">
@@ -80,7 +96,25 @@
 									class="form-control md-textarea"
 									rows="3"
 									v-model="event.description"
+									:class="{
+										'border-danger': $v.event.description.$error,
+									}"
+									@blur="$v.event.description.$touch()"
 								></textarea>
+
+								<div v-if="$v.event.description.$error" class="error">
+									<p v-if="!$v.event.description.required">
+										Description is required
+									</p>
+									<p
+										v-if="
+											!$v.event.description.minLength ||
+												!$v.event.description.maxLength
+										"
+									>
+										Description should be between 5 and 500 characters
+									</p>
+								</div>
 							</div>
 
 							<div class="form-row mt-3">
@@ -92,8 +126,30 @@
 											class="form-control"
 											aria-describedby="location"
 											v-model="event.location"
+											:class="{
+												'border-danger': $v.event.location.$error,
+											}"
+											@blur="$v.event.location.$touch()"
 										/>
 										<label for="location">Location</label>
+
+										<div
+											v-if="$v.event.location.$error"
+											class="error"
+										>
+											<p v-if="!$v.event.location.required">
+												Location is required
+											</p>
+											<p
+												v-if="
+													!$v.event.location.minLength ||
+														!$v.event.location.maxLength
+												"
+											>
+												Location should not be less than 3
+												characters
+											</p>
+										</div>
 									</div>
 								</div>
 								<div class="col">
@@ -104,16 +160,35 @@
 											class="form-control"
 											aria-describedby="number"
 											v-model.number="event.max_guests"
+											:class="{
+												'border-danger': $v.event.max_guests.$error,
+											}"
+											@blur="$v.event.max_guests.$touch()"
 										/>
 										<label for="number"
 											>Maximum number of guests</label
 										>
+
+										<div
+											v-if="$v.event.max_guests.$error"
+											class="error"
+										>
+											<p
+												v-if="
+													!$v.event.max_guests.required ||
+														!$v.event.max_guests.integer
+												"
+											>
+												Number is required
+											</p>
+										</div>
 									</div>
 								</div>
 							</div>
 							<button
 								id="btn"
 								class="btn btn-outline-info btn-rounded my-2 waves-effect z-depth-0"
+								:disabled="$v.$invalid"
 								@click="editEvent"
 							>
 								Confirm edit
@@ -136,6 +211,12 @@
 import Datepicker from "vuejs-datepicker"
 import moment from "moment"
 import { mapState } from "vuex"
+import {
+	required,
+	minLength,
+	maxLength,
+	integer,
+} from "vuelidate/lib/validators"
 
 export default {
 	created() {
@@ -170,6 +251,26 @@ export default {
 			submitted: false,
 		}
 	},
+	validations: {
+		event: {
+			title: {
+				required,
+				minLength: minLength(5),
+				maxLength: maxLength(50),
+			},
+			description: {
+				required,
+				minLength: minLength(5),
+				maxLength: maxLength(500),
+			},
+			location: {
+				required,
+				minLength: minLength(3),
+				maxLength: maxLength(100),
+			},
+			max_guests: { required, integer },
+		},
+	},
 	methods: {
 		editEventData() {
 			return {
@@ -187,8 +288,13 @@ export default {
 			return moment(date).format("dddd MMMM Do YYYY")
 		},
 		async editEvent() {
-			this.submitted = true
-			await this.$store.dispatch("editEvent", this.event)
+			this.$v.$touch()
+			if (!this.$v.$invalid) {
+				this.submitted = true
+				await this.$store.dispatch("editEvent", this.event)
+			} else {
+				return
+			}
 		},
 		async deleteEvent() {
 			if (

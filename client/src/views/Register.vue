@@ -1,7 +1,7 @@
 <template>
 	<div class="register">
 		<div class="form">
-			<div class="card" style="border: none">
+			<div class="card" style="border: solid 1px  #17a2bb;">
 				<h5
 					class="card-header info-color white-text text-center py-3"
 					style="background-color: #17a2bb; color: white;"
@@ -22,26 +22,61 @@
 									<input
 										type="text"
 										id="materialRegisterFormFirstName"
-										class="form-control"
 										v-model="firstName"
+										class="form-control"
+										:class="{ 'border-danger': $v.firstName.$error }"
+										@blur="$v.firstName.$touch()"
 									/>
 									<label for="materialRegisterFormFirstName"
 										>First name</label
 									>
+
+									<div v-if="$v.firstName.$error" class="error">
+										<p
+											v-if="
+												!$v.firstName.minLength ||
+													!$v.firstName.maxLength ||
+													!$v.firstName.alpha
+											"
+										>
+											First Name shouldn't be less than 3 letters
+										</p>
+										<p v-if="!$v.firstName.required">
+											First name is required
+										</p>
+									</div>
 								</div>
 							</div>
+
 							<div class="col">
 								<!-- Last name -->
 								<div class="md-form">
 									<input
 										type="text"
 										id="materialRegisterFormLastName"
-										class="form-control"
 										v-model="lastName"
+										class="form-control"
+										:class="{ 'border-danger': $v.lastName.$error }"
+										@blur="$v.lastName.$touch()"
 									/>
 									<label for="materialRegisterFormLastName"
 										>Last name</label
 									>
+
+									<div v-if="$v.lastName.$error" class="error">
+										<p
+											v-if="
+												!$v.lastName.minLength ||
+													!$v.lastName.maxLength ||
+													!$v.lastName.alpha
+											"
+										>
+											Last Name shouldn't be less than 3 letters
+										</p>
+										<p v-if="!$v.lastName.required">
+											Last name is required
+										</p>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -51,10 +86,19 @@
 							<input
 								type="email"
 								id="materialRegisterFormEmail"
-								class="form-control"
 								v-model="email"
+								class="form-control"
+								:class="{ 'border-danger': $v.email.$error }"
+								@blur="$v.email.$touch()"
 							/>
 							<label for="materialRegisterFormEmail">E-mail</label>
+
+							<div v-if="$v.email.$error" class="error">
+								<p v-if="!$v.email.email">Please enter a valid email</p>
+								<p v-if="!$v.email.required">
+									Email is required
+								</p>
+							</div>
 						</div>
 
 						<!-- Password -->
@@ -62,11 +106,26 @@
 							<input
 								type="password"
 								id="materialRegisterFormPassword"
-								class="form-control"
 								aria-describedby="materialRegisterFormPasswordHelpBlock"
 								v-model="password"
+								class="form-control"
+								:class="{ 'border-danger': $v.password.$error }"
+								@blur="$v.password.$touch()"
 							/>
 							<label for="materialRegisterFormPassword">Password</label>
+
+							<div v-if="$v.password.$error" class="error">
+								<p v-if="!$v.password.required">
+									Password is required
+								</p>
+								<p
+									v-if="
+										!$v.password.minLength || !$v.password.maxLength
+									"
+								>
+									Password should be between 8 and 30 characters
+								</p>
+							</div>
 						</div>
 
 						<!-- Confirm password -->
@@ -77,16 +136,25 @@
 								class="form-control"
 								aria-describedby="materialRegisterFormPasswordHelpBlock"
 								v-model="confirmPassword"
+								:class="{ 'border-danger': $v.confirmPassword.$error }"
+								@blur="$v.confirmPassword.$touch()"
 							/>
 							<label for="materialRegisterFormPhone"
 								>Confirm password</label
 							>
+
+							<div v-if="$v.confirmPassword.$error" class="error">
+								<p v-if="!$v.confirmPassword.same">
+									Passwords should match
+								</p>
+							</div>
 						</div>
 
 						<!-- Sign up button -->
 						<button
 							class="btn btn-outline-info btn-rounded btn-block my-2 waves-effect z-depth-0"
 							type="submit"
+							:disabled="$v.$invalid"
 						>
 							Sign Up
 						</button>
@@ -112,13 +180,13 @@
 							<i class="fab fa-github"></i>
 						</a> -->
 
-						<hr />
+						<!-- <hr /> -->
 
 						<!-- Terms of service -->
-						<p>
+						<!-- <p>
 							By clicking <em>Sign up</em> you agree to our
 							<a href="" target="_blank">terms of service</a>
-						</p>
+						</p> -->
 					</form>
 
 					<p v-if="error" class="error">
@@ -131,6 +199,14 @@
 </template>
 
 <script>
+import {
+	email,
+	minLength,
+	maxLength,
+	required,
+	sameAs,
+	alpha,
+} from "vuelidate/lib/validators"
 export default {
 	name: "Register",
 	data() {
@@ -145,6 +221,33 @@ export default {
 	created() {
 		this.$store.commit("SET_MESSAGE", null)
 	},
+	validations: {
+		firstName: {
+			required,
+			minLength: minLength(3),
+			maxLength: maxLength(20),
+			alpha,
+		},
+		lastName: {
+			required,
+			minLength: minLength(3),
+			maxLength: maxLength(20),
+			alpha,
+		},
+		email: {
+			required,
+			maxLength: maxLength(50),
+			email,
+		},
+		password: {
+			required,
+			minLength: minLength(8),
+			maxLength: maxLength(30),
+		},
+		confirmPassword: {
+			same: sameAs("password"),
+		},
+	},
 	computed: {
 		error() {
 			return this.$store.state.message
@@ -152,21 +255,26 @@ export default {
 	},
 	methods: {
 		async register() {
-			const id = Math.random()
-				.toString(16)
-				.slice(2)
+			this.$v.$touch()
+			if (!this.$v.$invalid) {
+				const id = Math.random()
+					.toString(16)
+					.slice(2)
 
-			const userInfo = {
-				first_name: this.firstName,
-				last_name: this.lastName,
-				email: this.email,
-				password: this.password,
-				user_id: id,
-			}
-			try {
-				await this.$store.dispatch("register", userInfo)
-			} catch (error) {
-				console.log(error)
+				const userInfo = {
+					first_name: this.firstName,
+					last_name: this.lastName,
+					email: this.email,
+					password: this.password,
+					user_id: id,
+				}
+				try {
+					await this.$store.dispatch("register", userInfo)
+				} catch (error) {
+					console.log(error)
+				}
+			} else {
+				return
 			}
 		},
 	},
@@ -175,10 +283,9 @@ export default {
 
 <style scoped>
 .form {
-	width: 40%;
+	min-width: 40%;
 	margin: 0 28%;
-	margin-top: 3%;
-	position: absolute;
+	margin-top: 7%;
 }
 .error {
 	color: red;

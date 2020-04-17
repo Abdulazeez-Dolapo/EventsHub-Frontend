@@ -19,11 +19,11 @@
 			</div>
 			<div>
 				<ul style="cursor: pointer;">
-					<li @click="showEventsToAttend">
-						Total events Created: {{ userCreatedEvents.length }}
-					</li>
 					<li @click="showEventsCreated">
-						Total events Booked: {{ userEvents.length }}
+						Total Events Created: {{ userCreatedEvents.length }}
+					</li>
+					<li @click="showEventsToAttend">
+						Total Events Booked: {{ userEvents.length }}
 					</li>
 				</ul>
 			</div>

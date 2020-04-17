@@ -46,6 +46,7 @@
 							size="sm"
 							class="mr-sm-2"
 							placeholder="Search"
+							:disabled="this.$route.name !== 'AllEvents'"
 							v-model.trim="item"
 							@input="search"
 						></b-form-input>
@@ -79,17 +80,17 @@ export default {
 	data() {
 		return {
 			searchBy: "title",
-			item: ""
+			item: "",
 		}
 	},
 	watch: {
 		$route(to, from) {
 			this.item = ""
 			this.$store.dispatch("searchedEvents", null)
-		}
+		},
 	},
 	computed: {
-		...mapState(["logInStatus", "user", "allEvents", "searchedEvents"])
+		...mapState(["logInStatus", "user", "allEvents", "searchedEvents"]),
 	},
 	methods: {
 		logout() {
@@ -135,8 +136,8 @@ export default {
 			console.log(events)
 			this.$store.dispatch("searchedEvents", events)
 			console.log(this.searchedEvents)
-		}
-	}
+		},
+	},
 }
 </script>
 

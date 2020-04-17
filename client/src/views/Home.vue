@@ -24,12 +24,29 @@ export default {
 		login() {
 			this.$store.dispatch("logout")
 			this.$router.push({ name: "Login" })
-		}
-	}
+		},
+	},
 }
 </script>
 
 <style scoped>
+.home {
+	background-image: url("../assets/kent-lee-9bG50r7S0cg-unsplash.jpg");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	background-color: #17a2bb;
+	margin: 0;
+	padding: 0;
+	height: 94.9vh;
+	position: relative;
+}
+/* .cover {
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 2;
+	height: 94.9vh;
+	position: relative;
+} */
 .text {
 	position: absolute;
 	color: white;
@@ -37,8 +54,8 @@ export default {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-		Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+		"Open Sans", "Helvetica Neue", sans-serif;
 }
 
 button {
