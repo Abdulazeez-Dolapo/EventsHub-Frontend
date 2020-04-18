@@ -15,6 +15,15 @@
 					<li>
 						{{ user.email }}
 					</li>
+					<li>
+						{{ user.profile_picture }}
+					</li>
+					<li>
+						<img
+							:src="`http://localhost:5000/${user.profile_picture}`"
+							alt=""
+						/>
+					</li>
 				</ul>
 			</div>
 			<div>

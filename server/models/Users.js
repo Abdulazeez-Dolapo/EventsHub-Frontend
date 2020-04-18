@@ -19,6 +19,9 @@ module.exports = db.sequelize.define("users", {
 	password: {
 		type: Sequelize.STRING,
 	},
+	profile_picture: {
+		type: Sequelize.STRING,
+	},
 	confirmed: {
 		type: Sequelize.TINYINT,
 		defaultValue: false,

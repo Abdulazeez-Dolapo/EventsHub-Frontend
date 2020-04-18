@@ -14,6 +14,7 @@
 						@submit.prevent="register"
 						class="text-center"
 						style="color: #757575;"
+						enctype="multipart/form-data"
 					>
 						<div class="form-row">
 							<div class="col">
@@ -123,7 +124,7 @@
 										!$v.password.minLength || !$v.password.maxLength
 									"
 								>
-									Password should be between 8 and 30 characters
+									Password should be between 8 and 32 characters
 								</p>
 							</div>
 						</div>
@@ -148,6 +149,20 @@
 									Passwords should match
 								</p>
 							</div>
+						</div>
+
+						<div class="form-group">
+							<input
+								type="file"
+								class="form-control-file"
+								id="exampleFormControlFile1"
+								ref="image"
+								accept="image/jpeg image/jpg image/png"
+								@change="upload"
+							/>
+							<label for="exampleFormControlFile1"
+								>Upload your profile picture</label
+							>
 						</div>
 
 						<!-- Sign up button -->
@@ -216,6 +231,7 @@ export default {
 			email: "",
 			password: "",
 			confirmPassword: "",
+			image: "",
 		}
 	},
 	created() {
@@ -242,7 +258,7 @@ export default {
 		password: {
 			required,
 			minLength: minLength(8),
-			maxLength: maxLength(30),
+			maxLength: maxLength(32),
 		},
 		confirmPassword: {
 			same: sameAs("password"),
@@ -254,6 +270,9 @@ export default {
 		},
 	},
 	methods: {
+		upload() {
+			this.image = this.$refs.image.files[0]
+		},
 		async register() {
 			this.$v.$touch()
 			if (!this.$v.$invalid) {
@@ -261,15 +280,16 @@ export default {
 					.toString(16)
 					.slice(2)
 
-				const userInfo = {
-					first_name: this.firstName,
-					last_name: this.lastName,
-					email: this.email,
-					password: this.password,
-					user_id: id,
-				}
+				let formData = new FormData()
+				formData.append("first_name", this.firstName)
+				formData.append("last_name", this.lastName)
+				formData.append("email", this.email)
+				formData.append("password", this.password)
+				formData.append("user_id", id)
+				formData.append("profile_picture", this.image)
+
 				try {
-					await this.$store.dispatch("register", userInfo)
+					await this.$store.dispatch("register", formData)
 				} catch (error) {
 					console.log(error)
 				}

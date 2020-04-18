@@ -1,15 +1,16 @@
 const Authentication = require("./controllers/registration/Authentication")
 const AuthenticationValidation = require("./policies/AuthenticationValidation")
-// cons = require("./middleware/authentication")
 const Authorise = require("./middleware/authentication")
+const upload = require("./middleware/imageUploads")
 
 const Event = require("./controllers/events/Events")
 const Guest = require("./controllers/events/Guest")
 
-module.exports = (app) => {
+module.exports = app => {
 	app.post(
 		"/register",
 		// AuthenticationValidation.register,
+		upload.single("profile_picture"),
 		Authentication.register
 	)
 

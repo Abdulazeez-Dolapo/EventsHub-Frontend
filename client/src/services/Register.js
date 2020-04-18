@@ -6,6 +6,7 @@ export default () => {
 		baseURL: `http://localhost:5000/`,
 		headers: {
 			authorization: `Bearer ${token}`,
+			"Content-Type": `multipart/form-data`,
 		},
 		timeout: 10000,
 	})

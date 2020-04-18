@@ -1,7 +1,7 @@
-const User = require("../../models/Users")
 const jwt = require("jsonwebtoken")
-const config = require("../../config/config")
+const User = require("../../models/Users")
 const bcrypt = require("bcrypt")
+const config = require("../../config/config")
 const transporter = require("./transporter")
 
 function generateToken(user) {
@@ -13,6 +13,7 @@ function generateToken(user) {
 
 module.exports = {
 	async register(req, res) {
+		console.log(req.body)
 		try {
 			const user = await User.findOne({
 				where: {
@@ -27,7 +28,16 @@ module.exports = {
 				let pwd = req.body.password
 				req.body.password = bcrypt.hashSync(pwd, 10)
 
-				const user = await User.create(req.body)
+				const info = {
+					user_id: req.body.user_id,
+					first_name: req.body.first_name,
+					last_name: req.body.last_name,
+					email: req.body.email,
+					password: req.body.password,
+					profile_picture: req.file.path,
+				}
+
+				const user = await User.create(info)
 				const userJson = user.toJSON()
 				const payload = {
 					name: userJson.first_name,
@@ -35,38 +45,40 @@ module.exports = {
 				}
 
 				const token = generateToken(payload)
-				const url = `http://localhost:8080/confirmation/${token}`
 
-				const HelperOptions = {
-					from: "Azeez Dolapo <azeezdolapotest@gmail.com>",
-					to: req.body.email,
-					subject: "EventsHub account confirmation",
-					html: `Please click this link to confirm your account with us: <a href="${url}">${url}</a>`,
-				}
+				res.status(200).send({ token })
+				// const url = `http://localhost:8080/confirmation/${token}`
 
-				transporter
-					.sendMail(HelperOptions)
-					.then(info => {
-						res.status(200).json({
-							message:
-								"Please check your email for a confirmation link before proceeding",
-						})
-						console.log(info)
-						return
-					})
-					.catch(err => {
-						User.destroy({
-							where: {
-								user_id: userJson.user_id,
-							},
-						})
-						res.status(400).send({
-							error:
-								"There was an error creating your account. Please try again.",
-						})
-						console.log(err)
-						return
-					})
+				// const HelperOptions = {
+				// 	from: "Azeez Dolapo <azeezdolapotest@gmail.com>",
+				// 	to: req.body.email,
+				// 	subject: "EventsHub account confirmation",
+				// 	html: `Please click this link to confirm your account with us: <a href="${url}">${url}</a>`,
+				// }
+
+				// transporter
+				// 	.sendMail(HelperOptions)
+				// 	.then(info => {
+				// 		res.status(200).json({
+				// 			message:
+				// 				"Please check your email for a confirmation link before proceeding",
+				// 		})
+				// 		console.log(info)
+				// 		return
+				// 	})
+				// 	.catch(err => {
+				// 		User.destroy({
+				// 			where: {
+				// 				user_id: userJson.user_id,
+				// 			},
+				// 		})
+				// 		res.status(400).send({
+				// 			error:
+				// 				"There was an error creating your account. Please try again.",
+				// 		})
+				// 		console.log(err)
+				// 		return
+				// 	})
 			}
 		} catch (error) {
 			console.log(error)
@@ -111,6 +123,7 @@ module.exports = {
 				last_name: userJson.last_name,
 				first_name: userJson.first_name,
 				email: userJson.email,
+				profile_picture: userJson.profile_picture,
 			}
 
 			res.send({
@@ -147,4 +160,8 @@ module.exports = {
 			})
 		}
 	},
+	// async upload(req, res) {
+	// 	console.log(req.file)
+	// 	res.send("hello")
+	// },
 }
