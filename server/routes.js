@@ -9,16 +9,12 @@ const Guest = require("./controllers/events/Guest")
 module.exports = app => {
 	app.post(
 		"/register",
-		// AuthenticationValidation.register,
+		AuthenticationValidation.register,
 		upload.single("profile_picture"),
 		Authentication.register
 	)
 
-	app.post(
-		"/login",
-		// AuthenticationValidation.login,
-		Authentication.login
-	)
+	app.post("/login", AuthenticationValidation.login, Authentication.login)
 
 	app.get("/confirm/:token", Authentication.confirmEmail)
 

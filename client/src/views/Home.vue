@@ -22,7 +22,7 @@ export default {
 	name: "Home",
 	methods: {
 		login() {
-			this.$store.dispatch("logout")
+			this.$store.dispatch("user/logout")
 			this.$router.push({ name: "Login" })
 		},
 	},
@@ -41,12 +41,7 @@ export default {
 	height: 94.9vh;
 	position: relative;
 }
-/* .cover {
-	background-color: rgba(0, 0, 0, 0.5);
-	z-index: 2;
-	height: 94.9vh;
-	position: relative;
-} */
+
 .text {
 	position: absolute;
 	color: white;
@@ -54,8 +49,8 @@ export default {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
-		"Open Sans", "Helvetica Neue", sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+		Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 button {

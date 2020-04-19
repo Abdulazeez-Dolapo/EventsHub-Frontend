@@ -212,6 +212,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex"
 import Datepicker from "vuejs-datepicker"
 import moment from "moment"
 import {
@@ -223,7 +224,7 @@ import {
 
 export default {
 	created() {
-		this.$store.commit("SET_MESSAGE", null, false)
+		this.$store.dispatch("setMessage", null)
 	},
 	name: "Register",
 	components: {
@@ -240,7 +241,6 @@ export default {
 		}
 
 		return {
-			categories: this.$store.state.categories,
 			times,
 			event: this.createEventData(),
 			submitted: false,
@@ -269,17 +269,17 @@ export default {
 			max_guests: { required, integer },
 		},
 	},
+	created() {
+		this.event.organiser_name = this.organiserName
+		this.event.organiser_id = this.organiserId
+	},
 	computed: {
-		organiserId() {
-			return this.$store.state.user[0]["user_id"]
-		},
-		organiserName() {
-			return (
-				this.$store.state.user[0]["first_name"] +
-				" " +
-				this.$store.state.user[0]["last_name"]
-			)
-		},
+		...mapState({
+			categories: state => state.categories,
+			organiserId: state => state.user.user["user_id"],
+			organiserName: state =>
+				`${state.user.user["first_name"]} ${state.user.user["last_name"]}`,
+		}),
 	},
 	methods: {
 		customFormatter(date) {
@@ -297,11 +297,8 @@ export default {
 				time: "",
 				date: "",
 				max_guests: "",
-				organiser_id: this.$store.state.user["user_id"],
-				organiser_name:
-					this.$store.state.user["first_name"] +
-					" " +
-					this.$store.state.user["last_name"],
+				organiser_id: "",
+				organiser_name: "",
 			}
 		},
 		async createEvent() {
@@ -309,7 +306,7 @@ export default {
 				this.$v.$touch()
 				if (!this.$v.$invalid) {
 					this.submitted = true
-					await this.$store.dispatch("createEvent", this.event)
+					await this.$store.dispatch("event/createEvent", this.event)
 					this.event = this.createEventData()
 				} else {
 					return

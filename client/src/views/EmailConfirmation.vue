@@ -20,9 +20,9 @@
 export default {
 	props: {
 		error: {
-			type: Boolean
-		}
-	}
+			type: Boolean,
+		},
+	},
 }
 </script>
 
@@ -30,6 +30,6 @@ export default {
 .confirm {
 	position: absolute;
 	margin-top: 5rem;
-	color: white;
+	color: black;
 }
 </style>

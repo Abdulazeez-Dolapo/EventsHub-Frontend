@@ -15,15 +15,6 @@
 					<li>
 						{{ user.email }}
 					</li>
-					<li>
-						{{ user.profile_picture }}
-					</li>
-					<li>
-						<img
-							:src="`http://localhost:5000/${user.profile_picture}`"
-							alt=""
-						/>
-					</li>
 				</ul>
 			</div>
 			<div>
@@ -89,7 +80,11 @@ import { mapState } from "vuex"
 
 export default {
 	computed: {
-		...mapState(["user", "userEvents", "userCreatedEvents"]),
+		...mapState({
+			user: state => state.user.user,
+			userEvents: state => state.event.userEvents,
+			userCreatedEvents: state => state.event.userCreatedEvents,
+		}),
 	},
 	data() {
 		return {
@@ -117,7 +112,7 @@ export default {
 		},
 	},
 	beforeDestroy() {
-		this.$store.commit("SET_MESSAGE", null)
+		this.$store.dispatch("setMessage", null)
 	},
 }
 </script>

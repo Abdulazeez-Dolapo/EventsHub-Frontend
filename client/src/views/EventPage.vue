@@ -66,13 +66,13 @@ export default {
 		}
 	},
 	computed: {
-		...mapState([
-			"logInStatus",
-			"newEvent",
-			"user",
-			"userEvents",
-			"displayNotification",
-		]),
+		...mapState({
+			logInStatus: state => state.user.logInStatus,
+			user: state => state.user.user,
+			newEvent: state => state.event.newEvent,
+			userEvents: state => state.event.userEvents,
+			displayNotification: state => state.displayNotification,
+		}),
 		formattedDate() {
 			return this.formatDate(this.event.date)
 		},
@@ -100,7 +100,7 @@ export default {
 			let eventArray = []
 
 			if (userEvents) {
-				userEvents.forEach((element) => {
+				userEvents.forEach(element => {
 					eventArray.push(element.event_id)
 				})
 			}
@@ -118,8 +118,8 @@ export default {
 			const eventArray = this.checkAttendance(this.userEvents)
 
 			if (eventArray.includes(this.event.event_id)) {
-				this.$store.commit(
-					"SET_MESSAGE",
+				this.$store.dispatch(
+					"setMessage",
 					"You have already marked your attendance at this event"
 				)
 				return
@@ -132,7 +132,7 @@ export default {
 					guest_last_name: this.user.last_name,
 					guest_user_id: this.user.user_id,
 				}
-				await this.$store.dispatch("markAttendance", data)
+				await this.$store.dispatch("attendance/markAttendance", data)
 				this.event = this.newEvent
 			}
 		},
@@ -146,10 +146,13 @@ export default {
 							event_id: this.event.event_id,
 							guest_user_id: this.user.user_id,
 						}
-						await this.$store.dispatch("cancelAttendance", info)
+						await this.$store.dispatch(
+							"attendance/cancelAttendance",
+							info
+						)
 						this.event = this.newEvent
-						this.$store.commit(
-							"SET_MESSAGE",
+						this.$store.dispatch(
+							"setMessage",
 							"You have successfully canceled your attendance at this event"
 						)
 					} catch (error) {
@@ -159,8 +162,8 @@ export default {
 					return
 				}
 			} else {
-				this.$store.commit(
-					"SET_MESSAGE",
+				this.$store.dispatch(
+					"setMessage",
 					"You have'nt marked your attendance at this event"
 				)
 				return
@@ -168,7 +171,7 @@ export default {
 		},
 	},
 	beforeRouteLeave(to, from, next) {
-		this.$store.commit("SET_MESSAGE", null)
+		this.$store.dispatch("setMessage", null)
 		if (to.name == "AllEvents") {
 			next()
 		} else {

@@ -19,7 +19,7 @@ export default {
 	},
 	mounted() {
 		this.clear = setTimeout(() => {
-			this.$store.state.displayNotification = false
+			this.$store.dispatch("setDisplay", null)
 		}, 5000)
 	},
 	beforeDestroy() {

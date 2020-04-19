@@ -204,8 +204,8 @@
 						</p> -->
 					</form>
 
-					<p v-if="error" class="error">
-						{{ error }}
+					<p v-if="message" class="error">
+						{{ message }}
 					</p>
 				</div>
 			</div>
@@ -214,6 +214,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex"
 import {
 	email,
 	minLength,
@@ -235,7 +236,7 @@ export default {
 		}
 	},
 	created() {
-		this.$store.commit("SET_MESSAGE", null)
+		this.$store.dispatch("setMessage", null)
 	},
 	validations: {
 		firstName: {
@@ -265,9 +266,7 @@ export default {
 		},
 	},
 	computed: {
-		error() {
-			return this.$store.state.message
-		},
+		...mapState(["message"]),
 	},
 	methods: {
 		upload() {
@@ -281,6 +280,7 @@ export default {
 					.slice(2)
 
 				let formData = new FormData()
+
 				formData.append("first_name", this.firstName)
 				formData.append("last_name", this.lastName)
 				formData.append("email", this.email)
@@ -289,7 +289,7 @@ export default {
 				formData.append("profile_picture", this.image)
 
 				try {
-					await this.$store.dispatch("register", formData)
+					await this.$store.dispatch("user/register", formData)
 				} catch (error) {
 					console.log(error)
 				}

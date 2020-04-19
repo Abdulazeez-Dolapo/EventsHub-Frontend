@@ -28,8 +28,8 @@
 				</b-navbar-nav>
 
 				<!-- Right aligned nav items -->
-				<b-navbar-nav class="ml-auto">
-					<b-nav-item-dropdown text="Search By" right>
+				<b-navbar-nav class="ml-auto pt-3">
+					<b-nav-item-dropdown text="Search By" right class="mb-3">
 						<b-dropdown-item value="location" @click="choose($event)"
 							>location</b-dropdown-item
 						>
@@ -44,7 +44,7 @@
 					<b-nav-form>
 						<b-form-input
 							size="sm"
-							class="mr-sm-2"
+							class="mr-sm-2 mb-3"
 							placeholder="Search"
 							:disabled="this.$route.name !== 'AllEvents'"
 							v-model.trim="item"
@@ -54,19 +54,29 @@
 
 					<b-button
 						size="sm"
-						class="my-2 my-sm-0 mr-3"
+						class="my-sm-0 mr-3"
+						style="height: 2.6em;"
 						:disabled="this.$route.name !== 'AllEvents'"
 						@click="search"
 						>Search</b-button
 					>
 
-					<b-nav-item-dropdown right v-if="logInStatus">
-						<template v-slot:button-content>
-							<em>{{ user.first_name }}</em>
-						</template>
-						<b-dropdown-item @click="profile">Profile</b-dropdown-item>
-						<b-dropdown-item @click="logout">Log Out</b-dropdown-item>
-					</b-nav-item-dropdown>
+					<!-- <b-nav-item-dropdown right v-if="logInStatus"> -->
+					<!-- <template v-slot:button-content id="image" style="">
+							<em
+								> -->
+					<div v-if="logInStatus">
+						<img
+							:src="`http://localhost:5000/${user.profile_picture}`"
+							alt=""
+							@click="profile"
+						/>
+						<!-- </em>
+						</template> -->
+						<!-- <b-dropdown-item>Profile</b-dropdown-item> -->
+						<button id="btn" @click="logout">Logout</button>
+						<!-- </b-nav-item-dropdown> -->
+					</div>
 				</b-navbar-nav>
 			</b-collapse>
 		</b-navbar>
@@ -86,15 +96,20 @@ export default {
 	watch: {
 		$route(to, from) {
 			this.item = ""
-			this.$store.dispatch("searchedEvents", null)
+			this.$store.dispatch("event/searchedEvents", null)
 		},
 	},
 	computed: {
-		...mapState(["logInStatus", "user", "allEvents", "searchedEvents"]),
+		...mapState({
+			logInStatus: state => state.user.logInStatus,
+			user: state => state.user.user,
+			allEvents: state => state.event.allEvents,
+			searchedEvents: state => state.event.searchedEvents,
+		}),
 	},
 	methods: {
 		logout() {
-			this.$store.dispatch("logout")
+			this.$store.dispatch("user/logout")
 			if (this.$route.name === "Home" || this.$route.name === "AllEvents") {
 				return
 			} else {
@@ -103,7 +118,7 @@ export default {
 			}
 		},
 		login() {
-			this.$store.dispatch("logout")
+			this.$store.dispatch("user/logout")
 			this.$router.push({ name: "Login" })
 		},
 		events() {
@@ -134,7 +149,7 @@ export default {
 		search() {
 			const events = this.startSearch(this.searchBy, this.item)
 			console.log(events)
-			this.$store.dispatch("searchedEvents", events)
+			this.$store.dispatch("event/searchedEvents", events)
 			console.log(this.searchedEvents)
 		},
 	},
@@ -144,5 +159,23 @@ export default {
 <style scoped>
 h1:hover {
 	cursor: pointer;
+}
+
+img {
+	height: 2.5em;
+	width: 2.8em;
+	border-radius: 50%;
+	margin-top: 0;
+}
+
+img:hover {
+	cursor: pointer;
+}
+
+#btn {
+	border: none;
+	background-color: inherit;
+	color: white;
+	margin-bottom: 1em;
 }
 </style>

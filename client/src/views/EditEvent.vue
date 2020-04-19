@@ -220,7 +220,7 @@ import {
 
 export default {
 	created() {
-		this.$store.commit("SET_MESSAGE", null)
+		this.$store.dispatch("setMessage", null)
 	},
 	props: {
 		eventData: {
@@ -291,7 +291,7 @@ export default {
 			this.$v.$touch()
 			if (!this.$v.$invalid) {
 				this.submitted = true
-				await this.$store.dispatch("editEvent", this.event)
+				await this.$store.dispatch("event/editEvent", this.event)
 			} else {
 				return
 			}
@@ -303,7 +303,10 @@ export default {
 				)
 			) {
 				this.submitted = true
-				await this.$store.dispatch("deleteEvent", this.$route.params.id)
+				await this.$store.dispatch(
+					"event/deleteEvent",
+					this.$route.params.id
+				)
 			} else {
 				return
 			}

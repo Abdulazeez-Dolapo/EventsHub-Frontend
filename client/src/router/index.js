@@ -11,13 +11,13 @@ import EditEvent from "../views/EditEvent.vue"
 import Profile from "../views/Profile.vue"
 import ErrorPage from "../views/Error.vue"
 import NetworkError from "../views/NetworkError.vue"
+import Welcome from "../views/Welcome.vue"
 import Nprogress from "nprogress"
 import store from "@/store"
 
 function checkToken(token, user) {
 	if (token) {
-		store.state.logInStatus = true
-		store.state.user = user
+		store.dispatch("user/getUser", user)
 	}
 }
 
@@ -25,12 +25,17 @@ Vue.use(VueRouter)
 
 const routes = [
 	{
+		path: "/welcome",
+		name: "Welcome",
+		component: Welcome,
+	},
+	{
 		path: "/events",
 		name: "AllEvents",
 		component: AllEvents,
 		props: true,
 		beforeEnter(to, from, next) {
-			store.dispatch("getEvents").then((events) => {
+			store.dispatch("event/getEvents").then(events => {
 				to.params.sentEvents = events
 				next()
 			})
@@ -43,16 +48,16 @@ const routes = [
 		props: true,
 		beforeEnter(to, from, next) {
 			store
-				.dispatch("getEvent", to.params.id)
-				.then((event) => {
+				.dispatch("event/getEvent", to.params.id)
+				.then(event => {
 					to.params.sentEvent = event
-					store.dispatch("getUserEvents").then(() => {
-						store.dispatch("getUserCreatedEvents").then(() => {
+					store.dispatch("event/getUserEvents").then(() => {
+						store.dispatch("event/getUserCreatedEvents").then(() => {
 							next()
 						})
 					})
 				})
-				.catch((error) => {
+				.catch(error => {
 					console.log(error)
 					if (error.response && error.response.status == "404") {
 						next({
@@ -75,7 +80,7 @@ const routes = [
 			if (token) {
 				const user = JSON.parse(sessionStorage.getItem("user"))
 				checkToken(token, user)
-				store.dispatch("getEvent", to.params.id).then((event) => {
+				store.dispatch("event/getEvent", to.params.id).then(event => {
 					to.params.eventData = event
 					next()
 				})
@@ -91,7 +96,7 @@ const routes = [
 		name: "Register",
 		component: Register,
 		beforeEnter(to, from, next) {
-			store.dispatch("logout")
+			store.dispatch("user/logout")
 			next()
 		},
 	},
@@ -102,11 +107,11 @@ const routes = [
 		props: true,
 		beforeEnter(to, from, next) {
 			store
-				.dispatch("confirm", to.params.token)
+				.dispatch("user/confirm", to.params.token)
 				.then(() => {
 					next()
 				})
-				.catch((err) => {
+				.catch(err => {
 					console.log(err)
 					to.params.error = true
 					next()
@@ -123,7 +128,7 @@ const routes = [
 		name: "Login",
 		component: Login,
 		beforeEnter(to, from, next) {
-			store.dispatch("logout")
+			store.dispatch("user/logout")
 			next()
 		},
 	},
@@ -153,8 +158,8 @@ const routes = [
 			if (token) {
 				const user = JSON.parse(sessionStorage.getItem("user"))
 				checkToken(token, user)
-				store.dispatch("getUserCreatedEvents").then(() => {
-					store.dispatch("getUserEvents").then(() => {
+				store.dispatch("event/getUserCreatedEvents").then(() => {
+					store.dispatch("event/getUserEvents").then(() => {
 						next()
 					})
 				})

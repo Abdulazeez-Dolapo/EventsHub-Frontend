@@ -120,7 +120,7 @@ export default {
 		...mapState(["routeMessage", "message"]),
 	},
 	created() {
-		this.$store.commit("SET_MESSAGE", null)
+		this.$store.dispatch("setMessage", null)
 	},
 	validations: {
 		email: {
@@ -130,6 +130,7 @@ export default {
 		},
 		password: {
 			required,
+			maxLength: maxLength(32),
 		},
 	},
 	methods: {
@@ -141,9 +142,9 @@ export default {
 					password: this.password,
 				}
 				try {
-					await this.$store.dispatch("login", userInfo)
-					this.password = null
+					await this.$store.dispatch("user/login", userInfo)
 				} catch (error) {
+					this.password = null
 					console.log(error)
 				}
 			} else {
@@ -152,7 +153,7 @@ export default {
 		},
 	},
 	beforeRouteLeave(to, from, next) {
-		this.$store.state.routeMessage = null
+		this.$store.dispatch("setRouteMessage", null)
 		next()
 	},
 }

@@ -32,10 +32,9 @@ export default {
 		const token = sessionStorage.getItem("token")
 		if (token) {
 			const user = JSON.parse(sessionStorage.getItem("user"))
-			this.$store.state.logInStatus = true
-			this.$store.state.user = user
+			this.$store.dispatch("user/getUser", user)
 		} else {
-			this.$store.state.logInStatus = false
+			this.$store.state.user.logInStatus = false
 		}
 	},
 }

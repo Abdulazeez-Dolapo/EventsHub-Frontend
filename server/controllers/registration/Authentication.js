@@ -46,39 +46,38 @@ module.exports = {
 
 				const token = generateToken(payload)
 
-				res.status(200).send({ token })
-				// const url = `http://localhost:8080/confirmation/${token}`
+				// res.status(200).send({ token })
+				const url = `http://localhost:8080/confirmation/${token}`
 
-				// const HelperOptions = {
-				// 	from: "Azeez Dolapo <azeezdolapotest@gmail.com>",
-				// 	to: req.body.email,
-				// 	subject: "EventsHub account confirmation",
-				// 	html: `Please click this link to confirm your account with us: <a href="${url}">${url}</a>`,
-				// }
+				const HelperOptions = {
+					from: "Azeez Dolapo <azeezdolapotest@gmail.com>",
+					to: req.body.email,
+					subject: "EventsHub account confirmation",
+					html: `Please click this link to confirm your account with us: <a href="${url}">${url}</a>`,
+				}
 
-				// transporter
-				// 	.sendMail(HelperOptions)
-				// 	.then(info => {
-				// 		res.status(200).json({
-				// 			message:
-				// 				"Please check your email for a confirmation link before proceeding",
-				// 		})
-				// 		console.log(info)
-				// 		return
-				// 	})
-				// 	.catch(err => {
-				// 		User.destroy({
-				// 			where: {
-				// 				user_id: userJson.user_id,
-				// 			},
-				// 		})
-				// 		res.status(400).send({
-				// 			error:
-				// 				"There was an error creating your account. Please try again.",
-				// 		})
-				// 		console.log(err)
-				// 		return
-				// 	})
+				transporter
+					.sendMail(HelperOptions)
+					.then(info => {
+						res.status(200).json({
+							message: `Welcome ${userJson.first_name}! Please check your email and click the confirmation link before proceeding`,
+						})
+						console.log(info)
+						return
+					})
+					.catch(err => {
+						User.destroy({
+							where: {
+								user_id: userJson.user_id,
+							},
+						})
+						res.status(400).send({
+							error:
+								"There was an error creating your account. Please try again.",
+						})
+						console.log(err)
+						return
+					})
 			}
 		} catch (error) {
 			console.log(error)
@@ -160,8 +159,4 @@ module.exports = {
 			})
 		}
 	},
-	// async upload(req, res) {
-	// 	console.log(req.file)
-	// 	res.send("hello")
-	// },
 }

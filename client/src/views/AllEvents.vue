@@ -84,7 +84,7 @@ export default {
 		searchedEvents() {
 			this.start = 0
 			this.end = 5
-			this.paginate()
+			this.paginate(this.start, this.end)
 			this.paging()
 			this.page = 1
 			if (this.searchedEvents != null) {
@@ -97,13 +97,13 @@ export default {
 		},
 	},
 	computed: {
-		...mapState([
-			"logInStatus",
-			"searchedEvents",
-			"savedPage",
-			"savedStart",
-			"savedEnd",
-		]),
+		...mapState({
+			logInStatus: state => state.user.logInStatus,
+			searchedEvents: state => state.event.searchedEvents,
+			savedPage: state => state.savedPage,
+			savedStart: state => state.savedStart,
+			savedEnd: state => state.savedEnd,
+		}),
 		formattedDate() {
 			for (const event of this.events) {
 				const date = new Date(event.date)
