@@ -1,45 +1,47 @@
 <template>
 	<div class="all-events">
 		<div class="all-cards">
-			<div
-				class="card mt-5 mx-3"
-				style="margin-top: 5rem; position: absolute; width: 40%; text-align: center;"
-				v-if="showError"
-				id="search"
-			>
-				<p>
-					No result found
-				</p>
+			<div class="card" v-if="showError" id="search">
+				<h2>
+					No results found
+				</h2>
 			</div>
+			<h1 v-else>
+				Events Listing
+			</h1>
 			<div
 				v-for="event in pagedEvents"
 				:key="event.event_id"
 				@click="viewEvent(event.event_id)"
-				class="card mt-5 mx-3 row-eq-height"
-				style="width: 60%; display: inline-block"
+				class="card mb-3"
 			>
-				<div class="card-body">
-					<h5 class="card-title py-0 px-0">{{ event.title }}</h5>
+				<div class="card-body pt-1 pb-0">
+					<h3 class="card-title pt-0">
+						<i class="fas fa-cube mr-3"></i>{{ event.title }}
+					</h3>
 					<p class="card-text">
-						{{ event.description }}
+						<i class="fas fa-users mr-3"></i
+						>{{ event.number_attending }} attending
 					</p>
 				</div>
-				<div class="card-footer mt-0 pt-0">
-					<small class="text-muted"
-						>{{ formattedDate }} @{{ event.time }} in
-						{{ event.location }}</small
-					>
+				<div class="card-footer py-2">
+					<p class="card-text">
+						<i class="far fa-calendar-alt mr-4"></i>{{ formattedDate }}
+						<i class="far fa-clock ml-3 mr-1"></i>{{ event.time }}
+					</p>
+					<p>
+						<i class="fas fa-map-marker-alt mr-4"></i>{{ event.location }}
+					</p>
 				</div>
 			</div>
-		</div>
-
-		<div class="nav" v-if="!showError">
-			<button :disabled="!showPrev" @click="prev">
-				<i class="fas fa-fast-backward"></i>
-			</button>
-			<button :disabled="!showNext" @click="next">
-				<i class="fas fa-fast-forward"></i>
-			</button>
+			<div class="nav" v-if="!showError">
+				<button :disabled="!showPrev" @click="prev">
+					<i class="fas fa-angle-double-left"></i>
+				</button>
+				<button :disabled="!showNext" @click="next">
+					<i class="fas fa-angle-double-right"></i>
+				</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -190,25 +192,83 @@ export default {
 }
 </script>
 <style scoped>
-.all-cards {
-	height: 90%;
-	width: 80%;
-	justify-self: center;
-	top: 50%;
-	left: 50%;
+.all-events {
+	background-color: #c27995;
+	min-height: 92vh;
+	width: 100%;
+	padding-top: 1em;
+	padding-bottom: 0;
+	justify-content: center;
+	font-family: "Baloo Bhaina 2", cursive;
 }
+
+#search {
+	height: 6%;
+	text-align: center;
+}
+
+.all-cards {
+	margin: 0 29%;
+	height: 100%;
+	width: 40%;
+}
+
+.card {
+	position: relative;
+	border-radius: 10px;
+	line-height: 1.3;
+	padding: 0;
+	width: 100%;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+	transition: all 0.3s ease-in-out;
+}
+
+p {
+	font-size: 1.3em;
+	margin: 0;
+}
+
+h3 {
+	margin: 0;
+	padding: 0;
+}
+
+/* Scale up the box */
+.card:hover {
+	transform: scale(1.01, 1.05);
+	cursor: pointer;
+}
+
+.card::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	border-radius: 5px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+	transition: opacity 0.3s ease-in-out;
+}
+
+/* Fade in the pseudo-element with the bigger shadow */
+.card:hover::after {
+	opacity: 1;
+}
+
 .nav {
-	width: 60%;
-	padding: 0.2em 0.2em;
 	justify-content: center;
 	margin: 0 auto;
+	padding-bottom: 0.5em;
 }
 
-.nav button:hover {
-	cursor: pointer;
-}
-
-.event:hover {
-	cursor: pointer;
+.nav button {
+	border: none;
+	margin-right: 0.1em;
+	width: 2em;
+	font-size: 2em;
+	background-color: inherit;
 }
 </style>

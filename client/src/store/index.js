@@ -18,6 +18,7 @@ export default new Vuex.Store({
 		savedEnd: null,
 		routeMessage: null,
 		message: "",
+		color: "black",
 		displayNotification: false,
 		categories: [
 			"Wedding",
@@ -40,7 +41,6 @@ export default new Vuex.Store({
 				state.displayNotification = false
 			}
 		},
-
 		SET_ROUTE_MESSAGE(state, message) {
 			state.routeMessage = message
 		},
@@ -62,6 +62,9 @@ export default new Vuex.Store({
 				state.displayNotification = false
 			}
 		},
+		SET_COLOR(state, value) {
+			state.color = value
+		},
 	},
 	actions: {
 		setRouteMessage({ commit }, message) {
@@ -76,6 +79,9 @@ export default new Vuex.Store({
 		},
 		setDisplay({ commit }, message) {
 			commit("SET_DISPLAY", message)
+		},
+		setColor({ commit }, value) {
+			commit("SET_COLOR", value)
 		},
 	},
 	getters: {},

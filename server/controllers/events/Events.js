@@ -7,12 +7,12 @@ module.exports = {
 
 			res.send({
 				event: event,
-				message: "You have successfully created an event",
+				message: "Event successfully created",
 			})
 		} catch (error) {
 			console.log(error)
 			res.status(400).send({
-				error: "There was an error creating your event",
+				error: "Error creating your event",
 			})
 		}
 	},
@@ -26,7 +26,7 @@ module.exports = {
 		} catch (error) {
 			console.log(error)
 			res.status(400).send({
-				error: "There was an error getting your events",
+				error: "Error getting your events",
 			})
 		}
 	},
@@ -63,7 +63,7 @@ module.exports = {
 				},
 			})
 			res.status(200).json({
-				message: "event successfully deleted",
+				message: "Event successfully deleted",
 			})
 		} catch (error) {
 			console.log(error)
@@ -136,7 +136,7 @@ module.exports = {
 				}
 			)
 			res.send({
-				message: "You've successfully edited this event",
+				message: "Event successfully edited",
 			})
 		} catch (error) {
 			console.log(error)

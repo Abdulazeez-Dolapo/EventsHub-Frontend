@@ -1,14 +1,9 @@
 <template>
 	<div class="not-found">
-		<h1>Oops! The {{ missing }} you're looking for doesnt exist</h1>
-		<h3 v-if="missing == 'page'">
+		<h1>Oops! The {{ missing }} you're looking for does not exist</h1>
+		<h3>
 			Back to the
-			<router-link to="/">homepage</router-link>
-		</h3>
-
-		<h3 v-if="missing == 'event'">
-			Back to the
-			<router-link to="/events">Events Page</router-link>
+			<router-link to="/events">Events page</router-link>
 		</h3>
 	</div>
 </template>
@@ -18,16 +13,17 @@ export default {
 	props: {
 		missing: {
 			type: String,
-			required: true
-		}
-	}
+			required: true,
+		},
+	},
 }
 </script>
 
 <style scoped>
 .not-found {
+	padding: 1em;
 	position: absolute;
 	margin-top: 5rem;
-	color: white;
+	color: black;
 }
 </style>

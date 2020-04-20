@@ -2,24 +2,29 @@
 	<div class="event-page">
 		<div class="card">
 			<div class="card-body">
-				<h5 class="card-title">{{ event.title }}</h5>
+				<h5 class="card-title">
+					<i class="fas fa-cube"></i>{{ event.title }}
+				</h5>
 				<div class="card-text">
-					<p>{{ formattedDate }} @{{ event.time }}</p>
 					<p>
-						{{ event.description }}
+						<i class="far fa-calendar-alt"></i>{{ formattedDate }}
+						<i class="far fa-clock"></i>{{ event.time }}
+					</p>
+
+					<p><i class="fas fa-cubes"></i>{{ event.description }}</p>
+					<p>
+						<i class="fas fa-map-marker-alt">{{ event.location }}</i>
 					</p>
 					<p>
-						{{ event.location }}
+						<i class="fas fa-user-secret"></i>{{ event.organiser_name }}
 					</p>
+					<p><i class="fab fa-cuttlefish"></i> {{ event.category }}</p>
 					<p>
-						{{ event.organiser_name }}
+						<i class="fas fa-users"></i
+						>{{ event.number_attending }} attending
 					</p>
-					<p>
-						{{ event.category }}
-					</p>
-					<p>{{ event.number_attending }} attending</p>
-					<p>
-						{{ max }}
+					<p v-if="max">
+						<i class="fas fa-exclamation-triangle"></i>{{ max }}
 					</p>
 				</div>
 				<button
@@ -118,9 +123,10 @@ export default {
 			const eventArray = this.checkAttendance(this.userEvents)
 
 			if (eventArray.includes(this.event.event_id)) {
+				this.$store.dispatch("setColor", "red")
 				this.$store.dispatch(
 					"setMessage",
-					"You have already marked your attendance at this event"
+					"Attendance already booked for this event"
 				)
 				return
 			} else {
@@ -151,9 +157,10 @@ export default {
 							info
 						)
 						this.event = this.newEvent
+						this.$store.dispatch("setColor", "red")
 						this.$store.dispatch(
 							"setMessage",
-							"You have successfully canceled your attendance at this event"
+							"Attendance successfully canceled"
 						)
 					} catch (error) {
 						console.log(error)
@@ -162,6 +169,7 @@ export default {
 					return
 				}
 			} else {
+				this.$store.dispatch("setColor", "red")
 				this.$store.dispatch(
 					"setMessage",
 					"You have'nt marked your attendance at this event"
@@ -184,10 +192,17 @@ export default {
 
 <style scoped>
 .event-page {
-	width: 60%;
-	margin-top: 4rem;
-	margin-left: 10rem;
-	margin-bottom: 4rem;
+	width: 100%;
+	min-height: 92vh;
+	font-family: "Baloo Bhaina 2", cursive;
+	background-color: #c27995;
+}
+.card {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 50%;
+	transform: translate(-50%, -50%);
 	padding: 1rem;
 }
 

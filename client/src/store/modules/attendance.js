@@ -20,9 +20,11 @@ export const actions = {
 			)
 			let userEvents = eventResponse.data.data
 			dispatch("event/setUserEvents", userEvents, { root: true })
+			dispatch("setColor", "green", { root: true })
 			dispatch("setMessage", response.data.message, { root: true })
 		} catch (error) {
 			console.log(error)
+			dispatch("setColor", "red", { root: true })
 			dispatch("setMessage", error, { root: true })
 		}
 	},
@@ -46,6 +48,7 @@ export const actions = {
 			dispatch("event/setUserEvents", newArray, { root: true })
 		} catch (error) {
 			console.log(error)
+			dispatch("setColor", "red", { root: true })
 			dispatch("setMessage", error, { root: true })
 		}
 	},
