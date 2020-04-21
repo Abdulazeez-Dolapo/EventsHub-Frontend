@@ -17,7 +17,7 @@ const fileFilter = (req, file, cb) => {
 	) {
 		cb(null, true)
 	} else {
-		cb(new Error("file not accepted"), false)
+		cb(new Error("File type not accepted"), false)
 	}
 }
 

@@ -12,7 +12,7 @@ module.exports = {
 
 			if (Number(event.number_attending) >= Number(event.max_guests)) {
 				res.send({
-					message: "Sorry! This event has reached it's maximum limit",
+					message: "Sorry! The event has reached it's limit",
 				})
 				return
 			} else {
@@ -24,8 +24,7 @@ module.exports = {
 				})
 				res.send({
 					number: allGuests.length,
-					message:
-						"Hurray! You have marked yourself as attending this event",
+					message: "Hurray! Attendance booked",
 				})
 			}
 		} catch (error) {
@@ -51,8 +50,7 @@ module.exports = {
 			})
 			res.send({
 				number: allGuests.length,
-				message:
-					"You have successfully canceled your attendance at this event",
+				message: "Attendance successfully canceled",
 			})
 		} catch (error) {
 			console.log(error)

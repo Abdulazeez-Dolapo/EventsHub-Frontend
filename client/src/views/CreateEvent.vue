@@ -1,10 +1,10 @@
 <template>
 	<div class="create-event">
 		<div class="form">
-			<div class="card" style="border: none">
+			<div class="card" style="border: none;">
 				<h5
 					class="card-header info-color white-text text-center py-3"
-					style="background-color: #17a2bb; color: white;"
+					style="background-color: #892c4f; color: white;"
 				>
 					<strong>Create Your Event</strong>
 				</h5>
@@ -13,7 +13,7 @@
 					<form
 						@submit.prevent="createEvent"
 						class="text-center"
-						style="color: #757575;"
+						style="color: black;"
 					>
 						<div class="form-row">
 							<div class="col">
@@ -28,7 +28,7 @@
 											'browser-default',
 											'custom-select',
 											'mb-2',
-											{ 'border-danger': $v.event.date.$error },
+											'border-dark',
 										]"
 										@opened="$v.event.date.$touch()"
 									/>
@@ -42,33 +42,20 @@
 
 							<div class="col">
 								<div class="md-form">
-									<select
-										class="browser-default custom-select mb-2"
-										:class="{ 'border-danger': $v.event.time.$error }"
-										@blur="$v.event.time.$touch()"
+									<b-form-timepicker
+										placeholder="Choose a time"
+										:hour12="true"
 										v-model="event.time"
-										id="time"
-									>
-										<option value="" disabled>Choose time</option>
-										<option
-											v-for="time in times"
-											:value="time"
-											:key="time"
-										>
-											{{ time }}
-										</option>
-									</select>
-								</div>
-								<div v-if="$v.event.time.$error" class="error">
-									<p v-if="!$v.event.time.required">
-										Time is required
-									</p>
+										class="border-dark py-1"
+										size="sm"
+										locale="en"
+									></b-form-timepicker>
 								</div>
 							</div>
 						</div>
 
 						<select
-							class="browser-default custom-select mb-2"
+							class="browser-default custom-select mb-2 border-dark"
 							:class="{ 'border-danger': $v.event.category.$error }"
 							@blur="$v.event.category.$touch()"
 							v-model="event.category"
@@ -89,7 +76,7 @@
 								placeholder="Title"
 								type="text"
 								id="title"
-								class="form-control mb-2"
+								class="form-control mb-2 border-dark"
 								v-model="event.title"
 								:class="{ 'border-danger': $v.event.title.$error }"
 								@blur="$v.event.title.$touch()"
@@ -114,7 +101,7 @@
 							<textarea
 								placeholder="Description"
 								id="description"
-								class="form-control md-textarea mb-2"
+								class="form-control md-textarea mb-2 border-dark"
 								rows="3"
 								v-model="event.description"
 								:class="{
@@ -144,7 +131,7 @@
 									<input
 										type="text"
 										id="location"
-										class="form-control"
+										class="form-control border-dark"
 										aria-describedby="location"
 										v-model="event.location"
 										:class="{
@@ -174,7 +161,7 @@
 									<input
 										type="number"
 										id="number"
-										class="form-control"
+										class="form-control border-dark"
 										aria-describedby="number"
 										v-model.number="event.max_guests"
 										:class="{
@@ -199,10 +186,13 @@
 						</div>
 						<button
 							class="btn btn-outline-info btn-rounded btn-block my-2 waves-effect z-depth-0"
+							style="background-color: #892c4f; color: white; border: solid 1px #892c4f;"
 							type="submit"
-							:disabled="$v.$invalid"
+							:disabled="$v.$invalid || !event.time || !event.date"
 						>
-							Create Event
+							<strong>
+								Create Event
+							</strong>
 						</button>
 					</form>
 				</div>
@@ -231,17 +221,7 @@ export default {
 		Datepicker,
 	},
 	data() {
-		const times = []
-		for (let i = 1; i < 13; i++) {
-			times.push(`${i} am`)
-		}
-
-		for (let i = 1; i < 13; i++) {
-			times.push(`${i} pm`)
-		}
-
 		return {
-			times,
 			event: this.createEventData(),
 			submitted: false,
 		}
@@ -279,6 +259,7 @@ export default {
 			organiserId: state => state.user.user["user_id"],
 			organiserName: state =>
 				`${state.user.user["first_name"]} ${state.user.user["last_name"]}`,
+			login: state => state.user.logInStatus,
 		}),
 	},
 	methods: {
@@ -317,18 +298,22 @@ export default {
 		},
 	},
 	beforeRouteLeave(to, from, next) {
-		if (!this.submitted) {
-			if (
-				window.confirm(
-					"You have unsaved changes. Are you sure you want to exit?"
-				)
-			) {
-				next()
-			} else {
-				next(false)
-			}
-		} else {
+		if (!this.login) {
 			next()
+		} else {
+			if (!this.submitted) {
+				if (
+					window.confirm(
+						"You have unsaved changes. Are you sure you want to exit?"
+					)
+				) {
+					next()
+				} else {
+					next(false)
+				}
+			} else {
+				next()
+			}
 		}
 	},
 }
@@ -343,7 +328,7 @@ export default {
 	width: 40%;
 	margin: 0 28%;
 	margin-top: 4%;
-	box-shadow: 1px 2px 1vh #17a2bb;
+	box-shadow: 1px 2px 1vh #892c4f;
 	position: absolute;
 }
 

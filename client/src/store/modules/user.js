@@ -37,6 +37,7 @@ export const actions = {
 			router.push({ name: "Welcome" })
 		} catch (error) {
 			console.log(error)
+			dispatch("setColor", "red", { root: true })
 			dispatch("setMessage", error.response.data.error, { root: true })
 		}
 	},
@@ -52,10 +53,9 @@ export const actions = {
 			sessionStorage.setItem("token", response.data.token)
 			sessionStorage.setItem("user", JSON.stringify(response.data.user))
 			dispatch("event/getUserEvents", null, { root: true })
-
-			dispatch("setMessage", response.data.error, { root: true })
 			router.push({ name: "AllEvents" })
 		} catch (error) {
+			dispatch("setColor", "red", { root: true })
 			dispatch("setMessage", error.response.data.error, { root: true })
 		}
 	},

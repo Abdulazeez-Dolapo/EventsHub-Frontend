@@ -3,11 +3,11 @@
 		<div class="header">
 			<Header />
 		</div>
-		<div class="rest">
+		<div class="page">
 			<transition name="fade" mode="out-in">
 				<router-view />
 			</transition>
-			<transition name="fade" appear>
+			<transition name="fade" mode="out-in" appear>
 				<div class="notification" v-if="displayNotification">
 					<Notification />
 				</div>
@@ -41,7 +41,7 @@ export default {
 </script>
 <style scoped>
 .header {
-	height: max-content;
+	height: 8vh;
 }
 .fade-enter-active,
 .fade-leave-active {

@@ -35,10 +35,10 @@ export default {
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: cover;
-	background-color: #17a2bb;
+	background-color: #892c4f;
 	margin: 0;
 	padding: 0;
-	height: 94.9vh;
+	height: 92vh;
 	position: relative;
 }
 
@@ -49,18 +49,18 @@ export default {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-		Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+	font-family: "Baloo Bhaina 2", cursive;
 }
 
 button {
+	border: solid 1px #892c4f;
 	border-radius: 2em;
-	background-color: #17a2bb;
+	background-color: #892c4f;
 	color: white;
 }
 
 button:hover {
-	background-color: #892c4f;
+	background-color: #611331;
 	border: solid 1px #892c4f;
 }
 </style>

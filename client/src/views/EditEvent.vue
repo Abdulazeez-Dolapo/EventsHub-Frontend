@@ -1,17 +1,27 @@
 <template>
 	<div class="edit-event">
-		<div class="form">
+		<div class="error text-center" v-if="error">
+			<h2>
+				{{ error }}
+			</h2>
+			<p class="text-center mt-4">
+				Please go to your
+				<router-link to="/profile">profile</router-link> to view events you
+				created
+			</p>
+		</div>
+		<div class="form" v-else>
 			<div @submit.prevent="" class="form">
 				<div class="card" style="border: none">
 					<h5
 						class="card-header info-color white-text text-center py-3"
-						style="background-color: #17a2bb; color: white;"
+						style="background-color: #892c4f; color: white;"
 					>
 						<strong>Edit Event</strong>
 					</h5>
 
 					<div class="card-body px-lg-5 pt-0 mt-2">
-						<form class="text-center" style="color: #757575;">
+						<form class="text-center" style="color: black;">
 							<div class="form-row">
 								<div class="col">
 									<div class="md-form">
@@ -24,6 +34,7 @@
 											:input-class="[
 												'browser-default',
 												'custom-select',
+												'border-dark',
 												'mb-4',
 											]"
 										/>
@@ -31,26 +42,20 @@
 								</div>
 								<div class="col">
 									<div class="md-form">
-										<select
-											class="browser-default custom-select mb-4"
+										<b-form-timepicker
+											placeholder="Choose a time"
+											:hour12="true"
 											v-model="event.time"
-											id="time"
-										>
-											<option value="" disabled>Choose time</option>
-											<option
-												v-for="time in times"
-												:value="time"
-												:key="time"
-											>
-												{{ time }}
-											</option>
-										</select>
+											class="border-dark py-1"
+											size="sm"
+											locale="en"
+										></b-form-timepicker>
 									</div>
 								</div>
 							</div>
 
 							<select
-								class="browser-default custom-select mb-4"
+								class="browser-default custom-select mb-4 border-dark"
 								v-model="event.category"
 							>
 								<option value="" disabled>Choose category</option>
@@ -68,7 +73,7 @@
 									placeholder="Title"
 									type="text"
 									id="title"
-									class="form-control"
+									class="form-control border-dark"
 									v-model="event.title"
 									:class="{ 'border-danger': $v.event.title.$error }"
 									@blur="$v.event.title.$touch()"
@@ -93,7 +98,7 @@
 								<textarea
 									placeholder="Description"
 									id="description"
-									class="form-control md-textarea"
+									class="form-control md-textarea border-dark"
 									rows="3"
 									v-model="event.description"
 									:class="{
@@ -123,7 +128,7 @@
 										<input
 											type="text"
 											id="location"
-											class="form-control"
+											class="form-control border-dark"
 											aria-describedby="location"
 											v-model="event.location"
 											:class="{
@@ -157,7 +162,7 @@
 										<input
 											type="number"
 											id="number"
-											class="form-control"
+											class="form-control border-dark"
 											aria-describedby="number"
 											v-model.number="event.max_guests"
 											:class="{
@@ -185,20 +190,24 @@
 									</div>
 								</div>
 							</div>
-							<button
-								id="btn"
-								class="btn btn-outline-info btn-rounded my-2 waves-effect z-depth-0"
-								:disabled="$v.$invalid"
-								@click="editEvent"
-							>
-								Confirm edit
-							</button>
-							<button @click="deleteEvent">
-								<i
-									class="fas fa-trash-alt"
-									style="color: red"
-								></i></button
-							><br />
+							<div class="buttons">
+								<button
+									id="btn"
+									class="btn btn-outline-info btn-rounded my-2 waves-effect z-depth-0"
+									style="background-color: #892c4f; color: white; border: solid 1px #892c4f; width: 84%; font-size: 1.1em"
+									:disabled="$v.$invalid || !event.time || !event.date"
+									@click="editEvent"
+								>
+									<strong>Confirm edit</strong>
+								</button>
+								<button
+									id="del"
+									class="pt-2 ml-4 mr-0"
+									@click="deleteEvent"
+								>
+									<i class="fas fa-trash-alt"></i></button
+								><br />
+							</div>
 						</form>
 					</div>
 				</div>
@@ -220,6 +229,7 @@ import {
 
 export default {
 	created() {
+		this.checkEligibility()
 		this.$store.dispatch("setMessage", null)
 	},
 	props: {
@@ -232,21 +242,15 @@ export default {
 		Datepicker,
 	},
 	computed: {
-		...mapState(["categories"]),
+		...mapState({
+			login: state => state.user.logInStatus,
+			categories: state => state.categories,
+			user: state => state.user.user.user_id,
+		}),
 	},
 	data() {
-		const times = []
-		for (let i = 1; i < 13; i++) {
-			times.push(`${i} am`)
-		}
-
-		for (let i = 1; i < 13; i++) {
-			times.push(`${i} pm`)
-		}
-
 		return {
 			error: null,
-			times,
 			event: this.editEventData(),
 			submitted: false,
 		}
@@ -311,20 +315,35 @@ export default {
 				return
 			}
 		},
+		checkEligibility() {
+			const organiser = this.eventData.organiser_id
+			const user = this.user
+			if (organiser == user) {
+				return
+			} else {
+				this.submitted = true
+				this.error =
+					"You are not the creator of this event so you don't have the necessary authorization to edit it."
+			}
+		},
 	},
 	beforeRouteLeave(to, from, next) {
-		if (!this.submitted) {
-			if (
-				window.confirm(
-					"You have unsaved changes. Are you sure you want to exit?"
-				)
-			) {
-				next()
-			} else {
-				next(false)
-			}
-		} else {
+		if (!this.login) {
 			next()
+		} else {
+			if (!this.submitted) {
+				if (
+					window.confirm(
+						"You have unsaved changes. Are you sure you want to exit?"
+					)
+				) {
+					next()
+				} else {
+					next(false)
+				}
+			} else {
+				next()
+			}
 		}
 	},
 }
@@ -335,12 +354,28 @@ export default {
 	width: 40%;
 	margin: 0 28%;
 	margin-top: 4%;
-	box-shadow: 1px 2px 1vh #17a2bb;
+	box-shadow: 1px 2px 1vh #892c4f;
 	position: absolute;
+}
+
+.buttons {
+	display: flex;
 }
 
 #btn:hover {
 	background-color: #892c4f;
 	border: solid 1px #892c4f;
+}
+
+#del {
+	border: none;
+	background-color: inherit;
+	font-size: 1.9em;
+	color: red;
+	float: right;
+}
+
+.error {
+	color: red;
 }
 </style>

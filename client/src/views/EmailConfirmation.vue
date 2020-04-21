@@ -1,11 +1,10 @@
 <template>
 	<div class="confirm">
 		<div v-if="!error">
-			<h1>
-				Congratulations! Your email has been confirmed. Click the link below
-				to
-			</h1>
-			<router-link to="/login">Login</router-link>
+			<h2>
+				Congratulations! Your email has been confirmed.
+			</h2>
+			<router-link tag="a" to="/login">Click this link to Login</router-link>
 		</div>
 		<div v-else>
 			<h1>
@@ -28,8 +27,14 @@ export default {
 
 <style scoped>
 .confirm {
-	position: absolute;
 	margin-top: 5rem;
 	color: black;
+	padding: 2em;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+		Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+a {
+	font-size: 2em;
 }
 </style>

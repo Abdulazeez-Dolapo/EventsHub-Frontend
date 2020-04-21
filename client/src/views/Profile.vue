@@ -48,9 +48,12 @@
 							{{ event.title }}
 						</li>
 					</ul>
-					<button @click="edit(event.event_id)">
-						<i class="fas fa-edit"></i>
-					</button>
+					<i
+						id="edit"
+						@click="edit(event.event_id)"
+						class="fas fa-pencil-alt"
+					></i>
+					<!-- <i class="fas fa-pencil-alt"></i> -->
 				</div>
 			</div>
 			<div v-if="showAttendance">
@@ -122,9 +125,18 @@ export default {
 	display: flex;
 	flex-direction: row;
 	width: 100%;
-	height: 100%;
-	background-color: teal;
+	min-height: 92vh;
+	background-color: #c27995;
 }
+
+#edit {
+	font-size: 2.3em;
+}
+
+#edit:hover {
+	cursor: pointer;
+}
+
 .left {
 	width: 48%;
 	margin: 5px 5px;

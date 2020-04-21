@@ -72,6 +72,7 @@ export const actions = {
 		try {
 			const response = await EventService.createEvent(event)
 			const id = response.data.event.event_id
+			dispatch("setColor", "green", { root: true })
 			dispatch("setMessage", response.data.message, { root: true })
 			router.push(`/event/${id}`)
 		} catch (error) {
@@ -86,6 +87,7 @@ export const actions = {
 			return response.data.events
 		} catch (error) {
 			console.log(error)
+			dispatch("setColor", "red", { root: true })
 			dispatch("setMessage", error.response.data.error, { root: true })
 		}
 	},
@@ -98,6 +100,7 @@ export const actions = {
 	async editEvent({ dispatch }, data) {
 		try {
 			const response = await EventService.updateEvent(data)
+			dispatch("setColor", "green", { root: true })
 			dispatch("setMessage", response.data.message, { root: true })
 			router.push({ name: "Profile" })
 		} catch (error) {
@@ -108,6 +111,7 @@ export const actions = {
 	async deleteEvent({ dispatch }, data) {
 		try {
 			const response = await EventService.deleteEvent(data)
+			dispatch("setColor", "red", { root: true })
 			dispatch("setMessage", response.data.message, { root: true })
 			router.push({ name: "Profile" })
 		} catch (error) {

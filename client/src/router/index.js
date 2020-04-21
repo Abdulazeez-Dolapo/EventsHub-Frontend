@@ -35,10 +35,18 @@ const routes = [
 		component: AllEvents,
 		props: true,
 		beforeEnter(to, from, next) {
-			store.dispatch("event/getEvents").then(events => {
-				to.params.sentEvents = events
-				next()
-			})
+			store
+				.dispatch("event/getEvents")
+				.then(events => {
+					to.params.sentEvents = events
+					next()
+				})
+				.catch(error => {
+					console.log(error)
+					if (!error.response) {
+						next({ name: "NetworkError" })
+					}
+				})
 		},
 	},
 	{
