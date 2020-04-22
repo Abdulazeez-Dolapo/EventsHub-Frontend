@@ -27,7 +27,8 @@ export default {
 	methods: {
 		timer() {
 			this.clear = setTimeout(() => {
-				this.$store.dispatch("setDisplay", null)
+				console.log("hello")
+				// this.$store.dispatch("setDisplay", null)
 			}, 5000)
 		},
 	},
