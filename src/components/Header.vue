@@ -71,7 +71,9 @@
 							class="py-0 my-0"
 						>
 							<img
-								:src="`http://localhost:5000/${user.profile_picture}`"
+								:src="
+									`https://eventshub-express.herokuapp.com/${user.profile_picture}`
+								"
 								alt=""
 							/>
 						</template>
