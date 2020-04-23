@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import NProgress from "nprogress"
 export default {
 	name: "Home",
 	methods: {

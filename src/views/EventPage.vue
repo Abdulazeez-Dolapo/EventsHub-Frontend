@@ -67,6 +67,7 @@
 
 <script>
 import { mapState } from "vuex"
+import NProgress from "nprogress"
 import { timeMixin } from "../mixins/formatTime"
 import { dateMixin } from "../mixins/formatDate"
 export default {
@@ -143,6 +144,7 @@ export default {
 				)
 				return
 			} else {
+				NProgress.start()
 				const data = {
 					event_id: this.event.event_id,
 					event_title: this.event.title,
@@ -152,6 +154,7 @@ export default {
 					guest_user_id: this.user.user_id,
 				}
 				await this.$store.dispatch("attendance/markAttendance", data)
+				NProgress.done()
 				this.event = this.newEvent
 			}
 		},
@@ -161,6 +164,7 @@ export default {
 			if (eventArray.includes(this.event.event_id)) {
 				if (window.confirm("Are you sure you want to cancel?")) {
 					try {
+						NProgress.start()
 						const info = {
 							event_id: this.event.event_id,
 							guest_user_id: this.user.user_id,
@@ -175,6 +179,7 @@ export default {
 							"setMessage",
 							"Attendance successfully canceled"
 						)
+						NProgress.done()
 					} catch (error) {
 						console.log(error)
 					}

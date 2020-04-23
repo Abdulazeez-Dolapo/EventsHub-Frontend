@@ -27,11 +27,11 @@ export default {
 
 <style scoped>
 .confirm {
-	margin-top: 5rem;
 	color: black;
 	padding: 2em;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-		Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+	font-family: helvetica, "Times New Roman", Times, serif;
+	background-color: #c27995;
+	height: 92vh;
 }
 
 a {

@@ -15,7 +15,10 @@ export default {}
 <style scoped>
 .network {
 	padding: 2em;
-	margin-top: 5rem;
+	font-family: helvetica, "Times New Roman", Times, serif;
+	background-color: #c27995;
 	color: black;
+	height: 92vh;
+	text-align: center;
 }
 </style>

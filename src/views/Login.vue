@@ -101,6 +101,7 @@
 <script>
 import { mapState } from "vuex"
 import { required, email, maxLength } from "vuelidate/lib/validators"
+import NProgress from "nprogress"
 
 export default {
 	name: "Register",
@@ -131,14 +132,16 @@ export default {
 		async login() {
 			this.$v.$touch()
 			if (!this.$v.$invalid) {
+				NProgress.start()
 				const userInfo = {
 					email: this.email,
 					password: this.password,
 				}
 				try {
 					await this.$store.dispatch("user/login", userInfo)
+					NProgress.done()
 				} catch (error) {
-					this.password = null
+					// this.password = null
 					console.log(error)
 				}
 			} else {

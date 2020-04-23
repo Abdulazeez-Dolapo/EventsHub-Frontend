@@ -51,7 +51,7 @@ export default {
 					}
 				)
 			} else {
-				store.dispatch("user/logout")
+				this.$store.dispatch("user/logout")
 			}
 		},
 	},
