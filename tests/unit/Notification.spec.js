@@ -1,36 +1,44 @@
 import { shallowMount, createLocalVue } from "@vue/test-utils"
 import Vuex from "vuex"
 import Notification from "@/components/Notification.vue"
-import flushpromises from "flush-promises"
+import flushPromises from "flush-promises"
+// import sinon from 'sinon'
+// import { state, actions } from "@/store"
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-jest.useFakeTimers()
+// jest.useFakeTimers()
 
 describe("Notification", () => {
-	let state = {
-		message: "hello",
-		color: "purple",
-	}
+	let state
+	let actions
+	let store
+	let wrapper
 
-	let actions = {
-		actionCall: jest.fn(),
-	}
+	beforeEach(() => {
+		state = {
+			message: "hello",
+			color: "purple",
+		}
+		actions = {
+			setDisplay: jest.fn(),
+		}
+		store = new Vuex.Store({
+			state,
+			actions,
+		})
 
-	let store = new Vuex.Store({
-		state,
+		wrapper = shallowMount(Notification, { store, localVue })
 	})
 
-	it("renders 'state.message' if state.message has a value", () => {
-		const wrapper = shallowMount(Notification, { store, localVue })
+	it("renders 'state.message' if it has a truthy value", () => {
 		const p = wrapper.find("p")
 		const text = p.text()
 		expect(text).toBe(state.message)
 	})
 
-	it("renders nothing if state.message has a falsy value", async () => {
-		const wrapper = shallowMount(Notification, { store, localVue })
+	it("renders nothing if 'state.message' has a falsy value", async () => {
 		const p = wrapper.find("p")
 		state.message = ""
 		await wrapper.vm.$nextTick()
@@ -39,25 +47,15 @@ describe("Notification", () => {
 	})
 
 	it("binds 'state.color' to the class of 'p'", async () => {
-		const wrapper = shallowMount(Notification, { store, localVue })
 		const p = wrapper.find("p")
 		expect(p.classes()).toContain(state.color)
 		expect(p.classes(state.color)).toBe(true)
 	})
 
-	it("should call a method that dispatches an action after 5 seconds", async () => {
-		const timer = jest.fn()
-		const wrapper = shallowMount(Notification, {
-			store,
-			localVue,
-			methods: {
-				timer,
-			},
-		})
-		expect(wrapper.vm.timer).toHaveBeenCalled()
-		// expect(actions.actionCall).not.toHaveBeenCalled()
-		// jest.advanceTimersByTime(5000)
-		// await wrapper.vm.$nextTick()
-		// expect(actions.actionCall).toHaveBeenCalledTimes(1)
+	jest.useFakeTimers()
+	it("should call a method that dispatches an action after 5 seconds", () => {
+		expect(actions.setDisplay).not.toHaveBeenCalled()
+		jest.runAllTimers()
+		expect(actions.setDisplay).toHaveBeenCalled()
 	})
 })

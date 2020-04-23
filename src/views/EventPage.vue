@@ -1,30 +1,47 @@
 <template>
 	<div class="event-page">
-		<div class="card">
+		<div class="card my-3" style="background-color: wheat">
 			<div class="card-body">
-				<h5 class="card-title">
-					<i class="fas fa-cube"></i>{{ event.title }}
-				</h5>
+				<p class="card-title" id="title">
+					<span class="icon"><i class="fas fa-cube"></i></span
+					>{{ event.title }}
+				</p>
 				<div class="card-text">
 					<p>
-						<i class="far fa-calendar-alt"></i>{{ formattedDate }}
-						<i class="far fa-clock"></i>{{ event.time }}
-					</p>
-
-					<p><i class="fas fa-cubes"></i>{{ event.description }}</p>
-					<p>
-						<i class="fas fa-map-marker-alt">{{ event.location }}</i>
+						<span class="icon"><i class="fas fa-cubes"></i></span
+						>{{ event.description }}
 					</p>
 					<p>
-						<i class="fas fa-user-secret"></i>{{ event.organiser_name }}
+						<span class="icon"><i class="fab fa-cuttlefish"></i> </span
+						>{{ event.category }}
 					</p>
-					<p><i class="fab fa-cuttlefish"></i> {{ event.category }}</p>
 					<p>
-						<i class="fas fa-users"></i
+						<span class="icon"><i class="far fa-calendar-alt"></i></span
+						>{{ formattedDate }}
+					</p>
+					<p>
+						<span class="icon"><i class="far fa-clock"></i></span
+						>{{ formattedTime }}
+					</p>
+					<p>
+						<span class="icon"><i class="fas fa-map-marker-alt"></i></span
+						>{{ event.location }}
+					</p>
+					<p>
+						<span class="icon"><i class="fas fa-user-secret"></i></span
+						>{{ event.organiser_name }}
+					</p>
+					<p>
+						<span class="icon"><i class="fas fa-users"></i></span
 						>{{ event.number_attending }} attending
 					</p>
 					<p v-if="max">
-						<i class="fas fa-exclamation-triangle"></i>{{ max }}
+						<span class="icon"
+							><i
+								style="color: red"
+								class="fas fa-exclamation-triangle"
+							></i></span
+						>{{ max }}
 					</p>
 				</div>
 				<button
@@ -50,6 +67,8 @@
 
 <script>
 import { mapState } from "vuex"
+import { timeMixin } from "../mixins/formatTime"
+import { dateMixin } from "../mixins/formatDate"
 export default {
 	created() {
 		this.display = this.displayButton()
@@ -70,6 +89,7 @@ export default {
 			event: this.sentEvent,
 		}
 	},
+	mixins: [dateMixin, timeMixin],
 	computed: {
 		...mapState({
 			logInStatus: state => state.user.logInStatus,
@@ -81,21 +101,14 @@ export default {
 		formattedDate() {
 			return this.formatDate(this.event.date)
 		},
+		formattedTime() {
+			return this.formatTime(this.event.time)
+		},
 		max() {
 			return this.maxGuest()
 		},
 	},
 	methods: {
-		formatDate(date) {
-			const dateToFormat = new Date(date)
-			const formattedDate = dateToFormat.toLocaleString(["en-us"], {
-				month: "long",
-				day: "2-digit",
-				year: "numeric",
-			})
-
-			return formattedDate
-		},
 		maxGuest() {
 			if (this.event.number_attending == this.event.max_guests) {
 				return "maximum attendance reached"
@@ -196,25 +209,30 @@ export default {
 	min-height: 92vh;
 	font-family: "Baloo Bhaina 2", cursive;
 	background-color: #c27995;
+	padding: 0.2rem;
 }
 .card {
-	position: absolute;
-	top: 50%;
-	left: 50%;
 	width: 50%;
-	transform: translate(-50%, -50%);
-	padding: 1rem;
+	margin: 0 auto;
+	padding: 0.1rem 1rem;
 }
-
-.fade-enter-active,
-.fade-leave-active {
-	transition-duration: 0.2s;
-	transition-property: opacity;
-	transition-timing-function: ease;
+p {
+	font-size: 1.2em;
 }
-
-.fade-enter,
-.fade-leave-active {
-	opacity: 0;
+.icon {
+	display: inline-block;
+	width: 2em;
+}
+button {
+	background-color: #892c4f;
+	border: #892c4f;
+}
+button:hover,
+button:active {
+	background-color: #580a28;
+}
+#title {
+	font-size: 1.7em;
+	font-weight: bolder;
 }
 </style>
