@@ -13,7 +13,7 @@
 				v-for="event in pagedEvents"
 				:key="event.event_id"
 				@click="viewEvent(event.event_id)"
-				class="card mb-3"
+				class="card mb-3 pt-2"
 			>
 				<div class="card-body pt-1 pb-0">
 					<h3 class="card-title pt-0">
@@ -26,8 +26,10 @@
 				</div>
 				<div class="card-footer py-2">
 					<p class="card-text">
-						<i class="far fa-calendar-alt mr-4"></i>{{ formattedDate }}
-						<i class="far fa-clock ml-3 mr-1"></i>{{ event.time }}
+						<i class="far fa-calendar-alt mr-4"></i
+						>{{ formatDate(event.date) }}
+						<i class="far fa-clock ml-3 mr-1"></i
+						>{{ formatTime(event.time) }}
 					</p>
 					<p>
 						<i class="fas fa-map-marker-alt mr-4"></i>{{ event.location }}
@@ -47,8 +49,9 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import { mapState } from "vuex"
+import { timeMixin } from "../mixins/formatTime"
+import { dateMixin } from "../mixins/formatDate"
 
 export default {
 	name: "AllEvents",
@@ -67,6 +70,7 @@ export default {
 		this.showPrev = false
 		this.paginate(this.start, this.end)
 	},
+	mixins: [dateMixin, timeMixin],
 	data() {
 		return {
 			events: this.sentEvents,
@@ -106,17 +110,6 @@ export default {
 			savedStart: state => state.savedStart,
 			savedEnd: state => state.savedEnd,
 		}),
-		formattedDate() {
-			for (const event of this.events) {
-				const date = new Date(event.date)
-				const formattedDate = date.toLocaleString(["en-us"], {
-					month: "long",
-					day: "2-digit",
-					year: "numeric",
-				})
-				return formattedDate
-			}
-		},
 	},
 	methods: {
 		viewEvent(id) {
@@ -160,8 +153,6 @@ export default {
 			} else {
 				maxPageNumber = Math.ceil(this.events.length / 5)
 			}
-			console.log(maxPageNumber)
-			console.log(this.page)
 			if (maxPageNumber == 1) {
 				this.showPrev = false
 				this.showNext = false
@@ -204,6 +195,8 @@ export default {
 
 #search {
 	height: 6%;
+	box-sizing: content-box;
+	padding-top: 0.8em;
 	text-align: center;
 }
 

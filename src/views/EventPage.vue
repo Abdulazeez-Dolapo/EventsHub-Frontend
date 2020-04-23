@@ -67,6 +67,8 @@
 
 <script>
 import { mapState } from "vuex"
+import { timeMixin } from "../mixins/formatTime"
+import { dateMixin } from "../mixins/formatDate"
 export default {
 	created() {
 		this.display = this.displayButton()
@@ -87,6 +89,7 @@ export default {
 			event: this.sentEvent,
 		}
 	},
+	mixins: [dateMixin, timeMixin],
 	computed: {
 		...mapState({
 			logInStatus: state => state.user.logInStatus,
@@ -106,37 +109,6 @@ export default {
 		},
 	},
 	methods: {
-		formatDate(date) {
-			const dateToFormat = new Date(date)
-			const formattedDate = dateToFormat.toLocaleString(["en-us"], {
-				month: "long",
-				day: "2-digit",
-				year: "numeric",
-			})
-
-			return formattedDate
-		},
-		formatTime(time) {
-			if (time.length > 5) {
-				const hour = parseInt(time.substring(0, 2))
-				const minute = time.substring(3, 5)
-				if (hour > 12) {
-					const newTime = `${hour - 12}:${minute} pm`
-					return newTime
-				} else if (hour == 12) {
-					const newTime = `${hour}:${minute} pm`
-					return newTime
-				} else if (hour == 0) {
-					const newTime = `12:${minute} am`
-					return newTime
-				} else {
-					const newTime = `${hour}:${minute} am`
-					return newTime
-				}
-			} else {
-				return time
-			}
-		},
 		maxGuest() {
 			if (this.event.number_attending == this.event.max_guests) {
 				return "maximum attendance reached"
