@@ -218,6 +218,10 @@
 					<p v-if="message" class="error">
 						{{ message }}
 					</p>
+
+					<p v-if="routeMessage" class="error">
+						{{ routeMessage }}
+					</p>
 				</div>
 			</div>
 		</div>
@@ -277,7 +281,7 @@ export default {
 		},
 	},
 	computed: {
-		...mapState(["message"]),
+		...mapState(["message", "routeMessage"]),
 	},
 	methods: {
 		upload() {
@@ -323,6 +327,7 @@ export default {
 
 .error {
 	color: red;
+	text-align: center;
 }
 
 input {

@@ -20,7 +20,7 @@
 					>
 					<b-nav-item
 						v-if="logInStatus"
-						to="create-event"
+						@click="create"
 						style="font-size: 1.3em"
 						>Create Event</b-nav-item
 					>
@@ -112,13 +112,22 @@ export default {
 	},
 	methods: {
 		logout() {
-			this.$store.dispatch("user/logout")
-			if (this.$route.name === "Home" || this.$route.name === "AllEvents") {
-				return
-			} else {
-				this.$router.push({ name: "AllEvents" })
-				return
-			}
+			this.$store.dispatch("user/logout").then(() => {
+				if (
+					this.$route.name === "Home" ||
+					this.$route.name === "AllEvents"
+				) {
+					console.log("header")
+					return
+				} else {
+					this.$router.push({ name: "AllEvents" })
+					console.log("header")
+					return
+				}
+			})
+		},
+		create() {
+			this.$router.push({ name: "Create-Event" })
 		},
 		login() {
 			this.$store.dispatch("user/logout")
@@ -139,9 +148,7 @@ export default {
 		},
 		search() {
 			const events = this.startSearch(this.searchBy, this.item)
-			console.log(events)
 			this.$store.dispatch("event/searchedEvents", events)
-			console.log(this.searchedEvents)
 		},
 	},
 }

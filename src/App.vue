@@ -19,8 +19,12 @@
 import Header from "@/components/Header"
 import Notification from "@/components/Notification"
 import { mapState } from "vuex"
+import axios from "axios"
 
 export default {
+	created() {
+		this.checkUser()
+	},
 	components: {
 		Header,
 		Notification,
@@ -28,14 +32,28 @@ export default {
 	computed: {
 		...mapState(["displayNotification"]),
 	},
-	created() {
-		const token = sessionStorage.getItem("token")
-		if (token) {
-			const user = JSON.parse(sessionStorage.getItem("user"))
-			this.$store.dispatch("user/getUser", user)
-		} else {
-			this.$store.state.user.logInStatus = false
-		}
+	methods: {
+		async checkUser() {
+			const token = sessionStorage.getItem("token")
+			if (token) {
+				const user = JSON.parse(sessionStorage.getItem("user"))
+				await this.$store.dispatch("user/getUser", user)
+				await this.$store.dispatch("event/getUserCreatedEvents")
+				await this.$store.dispatch("event/getUserEvents")
+				axios.interceptors.response.use(
+					response => response,
+					error => {
+						if (error.response.status === 401) {
+							store.dispatch("user/logout")
+							router.push({ name: "AllEvents" })
+						}
+						console.log(error)
+					}
+				)
+			} else {
+				store.dispatch("user/logout")
+			}
+		},
 	},
 }
 </script>

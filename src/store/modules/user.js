@@ -37,8 +37,18 @@ export const actions = {
 			router.push({ name: "Welcome" })
 		} catch (error) {
 			console.log(error)
-			dispatch("setColor", "red", { root: true })
-			dispatch("setMessage", error.response.data.error, { root: true })
+			if (!error.response) {
+				dispatch("setColor", "red", { root: true })
+				dispatch(
+					"setRouteMessage",
+					"There seems to be an issue with your internet connection",
+					{ root: true }
+				)
+				return
+			} else {
+				dispatch("setColor", "red", { root: true })
+				dispatch("setMessage", error.response.data.error, { root: true })
+			}
 		}
 	},
 
@@ -55,8 +65,18 @@ export const actions = {
 			dispatch("event/getUserEvents", null, { root: true })
 			router.push({ name: "AllEvents" })
 		} catch (error) {
-			dispatch("setColor", "red", { root: true })
-			dispatch("setMessage", error.response.data.error, { root: true })
+			if (!error.response) {
+				dispatch("setColor", "red", { root: true })
+				dispatch(
+					"setRouteMessage",
+					"There seems to be an issue with your internet connection",
+					{ root: true }
+				)
+				return
+			} else {
+				dispatch("setColor", "red", { root: true })
+				dispatch("setMessage", error.response.data.error, { root: true })
+			}
 		}
 	},
 

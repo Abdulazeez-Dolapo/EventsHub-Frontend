@@ -15,12 +15,6 @@ import Welcome from "../views/Welcome.vue"
 import Nprogress from "nprogress"
 import store from "@/store"
 
-function checkToken(token, user) {
-	if (token) {
-		store.dispatch("user/getUser", user)
-	}
-}
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -83,20 +77,17 @@ const routes = [
 		name: "Edit-Event",
 		component: EditEvent,
 		props: true,
+		meta: { requiresAuth: true },
 		beforeEnter(to, from, next) {
-			const token = sessionStorage.getItem("token")
-			if (token) {
-				const user = JSON.parse(sessionStorage.getItem("user"))
-				checkToken(token, user)
-				store.dispatch("event/getEvent", to.params.id).then(event => {
+			store
+				.dispatch("event/getEvent", to.params.id)
+				.then(event => {
 					to.params.eventData = event
 					next()
 				})
-			} else {
-				store.state.routeMessage =
-					"You have to be logged in before you can Edit an event"
-				next({ name: "Login" })
-			}
+				.catch(err => {
+					console.log(err)
+				})
 		},
 	},
 	{
@@ -144,38 +135,24 @@ const routes = [
 		path: "/create-event",
 		name: "Create-Event",
 		component: CreateEvent,
-		beforeEnter(to, from, next) {
-			const token = sessionStorage.getItem("token")
-			if (token) {
-				const user = JSON.parse(sessionStorage.getItem("user"))
-				checkToken(token, user)
-				next()
-			} else {
-				store.state.routeMessage =
-					"You have to be logged in before you can create an event"
-				next({ name: "Login" })
-			}
-		},
+		meta: { requiresAuth: true },
 	},
 	{
 		path: "/profile",
 		name: "Profile",
 		component: Profile,
+		meta: { requiresAuth: true },
 		beforeEnter(to, from, next) {
-			const token = sessionStorage.getItem("token")
-			if (token) {
-				const user = JSON.parse(sessionStorage.getItem("user"))
-				checkToken(token, user)
-				store.dispatch("event/getUserCreatedEvents").then(() => {
+			store
+				.dispatch("event/getUserCreatedEvents")
+				.then(() => {
 					store.dispatch("event/getUserEvents").then(() => {
 						next()
 					})
 				})
-			} else {
-				store.state.routeMessage =
-					"You have to be logged in to view this page"
-				next({ name: "Login" })
-			}
+				.catch(err => {
+					console.log(err)
+				})
 		},
 	},
 	{
@@ -206,8 +183,19 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-	Nprogress.start()
-	next()
+	const token = sessionStorage.getItem("token")
+	if (to.matched.some(record => record.meta.requiresAuth) && !token) {
+		store.dispatch(
+			"setRouteMessage",
+			"You have to be logged in to view this page"
+		)
+		console.log("hello")
+		next({ name: "Login" })
+		return
+	} else {
+		Nprogress.start()
+		next()
+	}
 })
 
 router.afterEach(() => {

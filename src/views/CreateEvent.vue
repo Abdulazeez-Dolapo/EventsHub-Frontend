@@ -288,7 +288,6 @@ export default {
 				if (!this.$v.$invalid) {
 					this.submitted = true
 					await this.$store.dispatch("event/createEvent", this.event)
-					this.event = this.createEventData()
 				} else {
 					return
 				}
