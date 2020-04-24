@@ -21,9 +21,11 @@ export default {
 
 <style scoped>
 .not-found {
-	padding: 1em;
-	position: absolute;
-	margin-top: 5rem;
+	padding: 2em;
+	font-family: helvetica, "Times New Roman", Times, serif;
+	background-color: #c27995;
 	color: black;
+	height: 92vh;
+	text-align: center;
 }
 </style>

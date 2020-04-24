@@ -205,6 +205,7 @@
 import { mapState } from "vuex"
 import Datepicker from "vuejs-datepicker"
 import moment from "moment"
+import NProgress from "nprogress"
 import {
 	required,
 	minLength,
@@ -282,17 +283,21 @@ export default {
 				organiser_name: "",
 			}
 		},
-		async createEvent() {
-			try {
-				this.$v.$touch()
-				if (!this.$v.$invalid) {
-					this.submitted = true
-					await this.$store.dispatch("event/createEvent", this.event)
-				} else {
-					return
-				}
-			} catch (error) {
-				console.log(error)
+		createEvent() {
+			this.$v.$touch()
+			if (!this.$v.$invalid) {
+				NProgress.start()
+				this.submitted = true
+				this.$store
+					.dispatch("event/createEvent", this.event)
+					.then(() => {
+						NProgress.done()
+					})
+					.catch(error => {
+						console.log(error)
+					})
+			} else {
+				return
 			}
 		},
 	},

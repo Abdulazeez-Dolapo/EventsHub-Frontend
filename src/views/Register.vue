@@ -229,6 +229,7 @@
 </template>
 
 <script>
+import NProgress from "nprogress"
 import { mapState } from "vuex"
 import {
 	email,
@@ -288,6 +289,7 @@ export default {
 			this.image = this.$refs.image.files[0]
 		},
 		async register() {
+			NProgress.start()
 			this.$v.$touch()
 			if (!this.$v.$invalid) {
 				const id = Math.random()
@@ -304,7 +306,11 @@ export default {
 				formData.append("profile_picture", this.image)
 
 				try {
-					await this.$store.dispatch("user/register", formData)
+					await this.$store
+						.dispatch("user/register", formData)
+						.then(() => {
+							NProgress.done()
+						})
 				} catch (error) {
 					console.log(error)
 				}

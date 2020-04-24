@@ -218,6 +218,7 @@
 
 <script>
 import Datepicker from "vuejs-datepicker"
+import NProgress from "nprogress"
 import moment from "moment"
 import { mapState } from "vuex"
 import {
@@ -294,8 +295,10 @@ export default {
 		async editEvent() {
 			this.$v.$touch()
 			if (!this.$v.$invalid) {
+				NProgress.start()
 				this.submitted = true
 				await this.$store.dispatch("event/editEvent", this.event)
+				NProgress.done()
 			} else {
 				return
 			}
@@ -306,11 +309,13 @@ export default {
 					"This event can not be recovered. Are you sure you want to delete it?"
 				)
 			) {
+				NProgress.start()
 				this.submitted = true
 				await this.$store.dispatch(
 					"event/deleteEvent",
 					this.$route.params.id
 				)
+				NProgress.done()
 			} else {
 				return
 			}

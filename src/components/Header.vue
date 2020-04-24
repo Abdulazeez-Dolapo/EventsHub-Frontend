@@ -38,7 +38,10 @@
 						<b-dropdown-item value="title" @click="choose($event)"
 							>title</b-dropdown-item
 						>
-						<b-dropdown-item value="category" @click="choose($event)"
+						<b-dropdown-item
+							value="category"
+							@click="choose($event)"
+							data-testid="search-params"
 							>category</b-dropdown-item
 						>
 						<b-dropdown-item value="location" @click="choose($event)"
@@ -47,14 +50,16 @@
 					</b-nav-item-dropdown>
 					<b-nav-form>
 						<b-form-input
+							data-testid="search-input"
 							size="sm"
 							class="mr-sm-2"
 							placeholder="Search"
 							:disabled="this.$route.name !== 'AllEvents'"
-							v-model.trim="item"
+							v-model.trim="searchInput"
 							@input="search"
 						></b-form-input>
 						<b-button
+							data-testid="search-button"
 							size="sm"
 							class="my-0 my-sm-0"
 							:disabled="this.$route.name !== 'AllEvents'"
@@ -78,7 +83,9 @@
 							/>
 						</template>
 						<b-dropdown-item to="/profile">Profile</b-dropdown-item>
-						<b-dropdown-item @click="logout">Logout</b-dropdown-item>
+						<b-dropdown-item data-testid="logout-button" @click="logout"
+							>Logout</b-dropdown-item
+						>
 					</b-nav-item-dropdown>
 				</b-navbar-nav>
 			</b-collapse>
@@ -93,12 +100,12 @@ export default {
 	data() {
 		return {
 			searchBy: "title",
-			item: "",
+			searchInput: "",
 		}
 	},
 	watch: {
 		$route(to, from) {
-			this.item = ""
+			this.searchInput = ""
 			this.$store.dispatch("event/searchedEvents", null)
 		},
 	},
@@ -137,17 +144,17 @@ export default {
 			this.searchBy = e.target.innerText
 			this.search()
 		},
-		startSearch(by, item) {
+		startSearch(by, searchInput) {
 			const searchedEvents = []
 			this.allEvents.forEach(event => {
-				if (event[by.trim()].includes(item.trim())) {
+				if (event[by.trim()].includes(searchInput.trim())) {
 					searchedEvents.push(event)
 				}
 			})
 			return searchedEvents
 		},
 		search() {
-			const events = this.startSearch(this.searchBy, this.item)
+			const events = this.startSearch(this.searchBy, this.searchInput)
 			this.$store.dispatch("event/searchedEvents", events)
 		},
 	},
