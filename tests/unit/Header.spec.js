@@ -29,12 +29,12 @@ describe("Header", () => {
 			localVue,
 			store,
 			router,
-			data() {
-				return {
-					searchInput: "hi",
-					searchBy: "",
-				}
-			},
+			// data() {
+			// 	return {
+			// 		searchInput: "",
+			// 		searchBy: "",
+			// 	}
+			// },
 		})
 	})
 
@@ -44,7 +44,6 @@ describe("Header", () => {
 		const searchInput = wrapper.vm.searchInput
 		expect(searchInput).toBe("hi")
 		input.setValue("hello")
-		await wrapper.vm.$nextTick()
 		expect(searchInput).toBe("hello")
 	})
 

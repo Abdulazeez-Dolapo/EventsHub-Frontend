@@ -87,6 +87,9 @@ const routes = [
 				})
 				.catch(err => {
 					console.log(err)
+					if (!err.response) {
+						next({ name: "NetworkError" })
+					}
 				})
 		},
 	},
@@ -146,12 +149,25 @@ const routes = [
 			store
 				.dispatch("event/getUserCreatedEvents")
 				.then(() => {
-					store.dispatch("event/getUserEvents").then(() => {
-						next()
-					})
+					store
+						.dispatch("event/getUserEvents")
+						.then(() => {
+							next()
+						})
+						.catch(err => {
+							console.log(err)
+							if (!err.response) {
+								next({ name: "NetworkError" })
+							}
+							return
+						})
 				})
 				.catch(err => {
 					console.log(err)
+					if (!err.response) {
+						next({ name: "NetworkError" })
+					}
+					return
 				})
 		},
 	},
@@ -189,7 +205,6 @@ router.beforeEach((to, from, next) => {
 			"setRouteMessage",
 			"You have to be logged in to view this page"
 		)
-		console.log("hello")
 		next({ name: "Login" })
 		return
 	} else {

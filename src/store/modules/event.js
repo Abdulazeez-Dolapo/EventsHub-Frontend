@@ -43,25 +43,17 @@ export const actions = {
 	},
 
 	async getUserCreatedEvents({ rootState, commit }) {
-		try {
-			const userCreatedEvents = await EventService.getUserCreatedEvents(
-				rootState.user.user.user_id
-			)
-			commit("SET_USER_CREATED_EVENTS", userCreatedEvents.data.userEvents)
-		} catch (error) {
-			console.log(error)
-		}
+		const userCreatedEvents = await EventService.getUserCreatedEvents(
+			rootState.user.user.user_id
+		)
+		commit("SET_USER_CREATED_EVENTS", userCreatedEvents.data.userEvents)
 	},
 
 	async getUserEvents({ rootState, commit }) {
-		try {
-			const eventResponse = await EventService.getUserEvents(
-				rootState.user.user.user_id
-			)
-			commit("SET_USER_EVENTS", eventResponse.data.data)
-		} catch (error) {
-			console.log(error)
-		}
+		const eventResponse = await EventService.getUserEvents(
+			rootState.user.user.user_id
+		)
+		commit("SET_USER_EVENTS", eventResponse.data.data)
 	},
 
 	searchedEvents({ commit }, events) {
@@ -81,15 +73,16 @@ export const actions = {
 	},
 
 	async getEvents({ commit }) {
-		try {
-			const response = await EventService.getEvents()
-			commit("SET_ALL_EVENTS", response.data.events)
-			return response.data.events
-		} catch (error) {
-			console.log(error)
-			dispatch("setColor", "red", { root: true })
-			dispatch("setMessage", error.response.data.error, { root: true })
-		}
+		// try {
+		const response = await EventService.getEvents()
+		commit("SET_ALL_EVENTS", response.data.events)
+		return response.data.events
+		// }
+		// catch (error) {
+		// 	console.log(error)
+		// 	dispatch("setColor", "red", { root: true })
+		// 	dispatch("setMessage", error.response.data.error, { root: true })
+		// }
 	},
 
 	async getEvent({ state }, id) {
