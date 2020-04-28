@@ -242,7 +242,7 @@ export default {
 <style scoped>
 .profile {
 	background-color: #c27995;
-	height: 92vh;
+	min-height: 92vh;
 }
 .form-control-primary {
 	margin: 10px;
