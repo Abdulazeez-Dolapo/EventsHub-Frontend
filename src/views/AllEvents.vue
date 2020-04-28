@@ -201,9 +201,9 @@ export default {
 }
 
 .all-cards {
-	margin: 0 29%;
+	margin: 0 auto;
 	height: 100%;
-	width: 40%;
+	width: 50%;
 }
 
 .card {
@@ -263,5 +263,12 @@ h3 {
 	width: 2em;
 	font-size: 2em;
 	background-color: inherit;
+}
+
+@media screen and (min-width: 200px) and (max-width: 720px) {
+	.all-cards {
+		margin: 0 auto;
+		width: 80%;
+	}
 }
 </style>

@@ -330,14 +330,29 @@ export default {
 
 .form {
 	width: 40%;
-	margin: 0 28%;
+	margin: 0 auto;
 	margin-top: 4%;
 	box-shadow: 1px 2px 1vh #892c4f;
-	position: absolute;
 }
 
 button:hover {
 	background-color: #892c4f;
 	border: solid 1px #892c4f;
+}
+
+@media screen and (min-width: 200px) and (max-width: 500px) {
+	.form {
+		margin: 0 auto;
+		margin-top: 4%;
+		width: 80%;
+	}
+}
+
+@media screen and (min-width: 501px) and (max-width: 720px) {
+	.form {
+		margin: 0 auto;
+		margin-top: 4%;
+		width: 60%;
+	}
 }
 </style>
