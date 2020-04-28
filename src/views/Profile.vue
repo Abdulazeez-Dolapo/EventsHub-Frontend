@@ -3,7 +3,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<!-- Sidebar -->
-				<div class="col-md-2 bg-light d-none d-md-block sidebar">
+				<div class="col-md-2 d-none d-md-block sidebar">
 					<div class="left-sidebar py-3">
 						<ul class="nav flex-column sidebar-nav">
 							<li class="nav-item">
@@ -95,7 +95,6 @@
 					<hr />
 
 					<h2 @click="showAllCreated">Events Created</h2>
-					<hr />
 					<div class="row">
 						<div v-if="!userCreated.length">
 							You have not created any events. Click on this
@@ -152,7 +151,6 @@
 					<hr />
 
 					<h2 @click="showAllBooked">Events Booked</h2>
-					<hr />
 					<div class="row">
 						<div v-if="!userBooked.length">
 							You have not booked any events. Click on this
@@ -242,6 +240,10 @@ export default {
 </script>
 
 <style scoped>
+.profile {
+	background-color: #c27995;
+	height: 92vh;
+}
 .form-control-primary {
 	margin: 10px;
 	opacity: 0.2;
@@ -253,13 +255,15 @@ p {
 }
 
 .sidebar {
+	background-color: #a7607b;
+	color: white;
 	position: fixed;
 	left: 0;
 	bottom: 0;
 	top: 0;
 	z-index: 100;
 	padding: 70px 0 0 10px;
-	border-right: 1px solid #d3d3d3;
+	border-right: 2px solid black;
 }
 
 .left-sidebar {
@@ -293,41 +297,4 @@ h2:hover,
 .click:hover {
 	cursor: pointer;
 }
-/* .profile {
-	display: flex;
-	flex-direction: row;
-	width: 100%;
-	min-height: 92vh;
-	background-color: #c27995;
-}
-
-#edit {
-	font-size: 2.3em;
-}
-
-#edit:hover {
-	cursor: pointer;
-}
-
-.left {
-	width: 48%;
-	margin: 5px 5px;
-}
-
-.right {
-	width: 48%;
-	margin: 5px 5px;
-}
-
-li {
-	border: solid black 2px;
-	margin-top: 1em;
-	list-style: none;
-	padding: 0.5em;
-}
-button {
-	margin-left: 0.6em;
-	height: 2.8em;
-	width: 11%;
-} */
 </style>
