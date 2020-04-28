@@ -164,7 +164,7 @@
 							:key="event.event_id"
 						>
 							<div class="card my-2">
-								<div class="card-body">
+								<div class="card-body py-1">
 									<h3
 										class="card-title"
 										@click="navigateToEvent(event.event_id)"

@@ -357,10 +357,9 @@ export default {
 <style scoped>
 .edit-event {
 	width: 40%;
-	margin: 0 28%;
+	margin: 0 auto;
 	margin-top: 4%;
 	box-shadow: 1px 2px 1vh #892c4f;
-	position: absolute;
 }
 
 .buttons {
@@ -382,5 +381,21 @@ export default {
 
 .error {
 	color: red;
+}
+
+@media screen and (min-width: 200px) and (max-width: 500px) {
+	.edit-event {
+		margin: 0 auto;
+		margin-top: 4%;
+		width: 80%;
+	}
+}
+
+@media screen and (min-width: 501px) and (max-width: 760px) {
+	.edit-event {
+		margin: 0 auto;
+		margin-top: 4%;
+		width: 60%;
+	}
 }
 </style>

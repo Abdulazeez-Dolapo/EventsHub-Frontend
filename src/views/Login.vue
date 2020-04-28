@@ -193,4 +193,22 @@ i {
 	margin-right: 0.5em;
 	margin-top: 0.4em;
 }
+
+@media screen and (min-width: 200px) and (max-width: 400px) {
+	.form {
+		width: 80%;
+	}
+}
+
+@media screen and (min-width: 401px) and (max-width: 540px) {
+	.form {
+		width: 70%;
+	}
+}
+
+@media screen and (min-width: 541px) and (max-width: 720px) {
+	.form {
+		width: 50%;
+	}
+}
 </style>
