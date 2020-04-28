@@ -353,4 +353,16 @@ button:hover {
 	background-color: #892c4f;
 	border: solid 1px #892c4f;
 }
+
+@media screen and (min-width: 200px) and (max-width: 500px) {
+	.form {
+		width: 80%;
+	}
+}
+
+@media screen and (min-width: 501px) and (max-width: 700px) {
+	.form {
+		width: 65%;
+	}
+}
 </style>

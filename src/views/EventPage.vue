@@ -240,4 +240,11 @@ button:active {
 	font-size: 1.7em;
 	font-weight: bolder;
 }
+
+@media screen and (min-width: 200px) and (max-width: 639px) {
+	.card {
+		margin: 0 auto;
+		width: 80%;
+	}
+}
 </style>

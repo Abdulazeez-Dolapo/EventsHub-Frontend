@@ -7,7 +7,7 @@
 					<div class="left-sidebar py-3">
 						<ul class="nav flex-column sidebar-nav">
 							<li class="nav-item">
-								<a href="" class="nav-link active">
+								<p class="nav-link active">
 									<svg
 										class="bi bi-chevron-right"
 										width="16"
@@ -22,13 +22,11 @@
 											clip-rule="evenodd"
 										/>
 									</svg>
-									<p>
-										Account information
-									</p>
-								</a>
+									{{ user.first_name }}
+								</p>
 							</li>
-							<!-- <li class="nav-item">
-								<a href="" class="nav-link active">
+							<li class="nav-item">
+								<p class="nav-link active">
 									<svg
 										class="bi bi-chevron-right"
 										width="16"
@@ -44,48 +42,10 @@
 										/>
 									</svg>
 									{{ user.last_name }}
-								</a>
-							</li> -->
-							<!-- <li class="nav-item">
-								<a href="" class="nav-link active">
-									<svg
-										class="bi bi-chevron-right"
-										width="16"
-										height="16"
-										viewBox="0 0 20 20"
-										fill="currentColor"
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<path
-											fill-rule="evenodd"
-											d="M6.646 3.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L12.293 10 6.646 4.354a.5.5 0 010-.708z"
-											clip-rule="evenodd"
-										/>
-									</svg>
-									{{ user.email }}
-								</a>
-							</li> -->
-							<li class="nav-item">
-								<a href="" class="nav-link active">
-									<svg
-										class="bi bi-chevron-right"
-										width="16"
-										height="16"
-										viewBox="0 0 20 20"
-										fill="currentColor"
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<path
-											fill-rule="evenodd"
-											d="M6.646 3.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L12.293 10 6.646 4.354a.5.5 0 010-.708z"
-											clip-rule="evenodd"
-										/>
-									</svg>
-									<p>Events Created: {{ userCreatedLength }}</p>
-								</a>
+								</p>
 							</li>
 							<li class="nav-item">
-								<a href="" class="nav-link active">
+								<p class="nav-link active">
 									<svg
 										class="bi bi-chevron-right"
 										width="16"
@@ -100,8 +60,31 @@
 											clip-rule="evenodd"
 										/>
 									</svg>
-									<p>Events Booked: {{ userBookedLength }}</p>
-								</a>
+									<span @click="showAllCreated" class="click"
+										>Events Created: {{ userCreated.length }}</span
+									>
+								</p>
+							</li>
+							<li class="nav-item">
+								<p class="nav-link active">
+									<svg
+										class="bi bi-chevron-right"
+										width="16"
+										height="16"
+										viewBox="0 0 20 20"
+										fill="currentColor"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											fill-rule="evenodd"
+											d="M6.646 3.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L12.293 10 6.646 4.354a.5.5 0 010-.708z"
+											clip-rule="evenodd"
+										/>
+									</svg>
+									<span @click="showAllBooked" class="click"
+										>Events Booked: {{ userBooked.length }}</span
+									>
+								</p>
 							</li>
 						</ul>
 					</div>
@@ -111,67 +94,83 @@
 					<h1>Welcome {{ user.first_name }}</h1>
 					<hr />
 
-					<h3>Invoices</h3>
+					<h2 @click="showAllCreated">Events Created</h2>
 					<hr />
 					<div class="row">
-						<div
-							v-for="event in sampleBooked"
-							:key="event.event_id"
-							@click="viewEvent(event.event_id)"
-							class="card mb-3 pt-2 col-sm-6"
-						>
-							<div class="card-body pt-1 pb-0">
-								<h3 class="card-title pt-0">
-									<i class="fas fa-cube mr-3"></i>{{ event.title }}
-								</h3>
-								<p class="card-text">
-									<i class="fas fa-users mr-3"></i
-									>{{ event.number_attending }} attending
-								</p>
-							</div>
-							<div class="card-footer py-2">
-								<p class="card-text">
-									<i class="far fa-calendar-alt mr-4"></i
-									>{{ formatDate(event.date) }}
-									<i class="far fa-clock ml-3 mr-1"></i
-									>{{ formatTime(event.time) }}
-								</p>
-								<p>
-									<i class="fas fa-map-marker-alt mr-4"></i
-									>{{ event.location }}
-								</p>
-							</div>
+						<div v-if="!userCreated.length">
+							You have not created any events. Click on this
+							<router-link to="/create-event">link</router-link> to
+							create one
 						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-sm-6">
+						<div
+							v-for="event in sampleCreated"
+							:key="event.event_id"
+							class="col-sm-6"
+						>
 							<div class="card">
-								<div class="card-body">
-									<h5 class="card-title">Invoice #184389</h5>
+								<div class="card-body pt-1 pb-0">
+									<h3 class="card-title pt-0">
+										<span @click.self="viewEvent(event.event_id)">
+											<i class="fas fa-cube mr-3"></i
+											>{{ event.title }}
+										</span>
+										<button
+											@click="edit(event.event_id)"
+											style="float: right;"
+										>
+											<i
+												id="edit"
+												class="fas fa-pencil-alt mt-1"
+											></i>
+										</button>
+									</h3>
 									<p class="card-text">
-										Lorem, ipsum dolor sit amet consectetur
-										adipisicing elit. Fugiat harum debitis animi iure
-										maiores eius, facilis ipsa doloremque minima
-										necessitatibus exercitationem magni numquam
-										beatae, illo eveniet amet sint? Mollitia, iste.
+										<i class="fas fa-users mr-3"></i
+										>{{ event.number_attending }} attending
 									</p>
-									<a href="" class="btn btn-primary">Print</a>
+								</div>
+								<div
+									class="card-footer pt-2 pb-0"
+									@click="viewEvent(event.event_id)"
+								>
+									<p class="card-text my-0">
+										<i class="far fa-calendar-alt mr-4"></i
+										>{{ formatDate(event.date) }}
+										<i class="far fa-clock ml-3 mr-1"></i
+										>{{ formatTime(event.time) }}
+									</p>
+									<p style="display: block;" class="mb-1">
+										<i
+											class="fas fa-map-marker-alt mr-4 py-0 my-0"
+										></i
+										>{{ event.location }}
+									</p>
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-6">
-							<div class="card">
-								<div class="card-body">
-									<h5 class="card-title">Invoice #184391</h5>
-									<p class="card-text">
-										Lorem, ipsum dolor sit amet consectetur
-										adipisicing elit. Fugiat harum debitis animi iure
-										maiores eius, facilis ipsa doloremque minima
-										necessitatibus exercitationem magni numquam
-										beatae, illo eveniet amet sint? Mollitia, iste.
-									</p>
-									<a href="" class="btn btn-primary">Print</a>
+					</div>
+					<hr />
+
+					<h2 @click="showAllBooked">Events Booked</h2>
+					<hr />
+					<div class="row">
+						<div v-if="!userBooked.length">
+							You have not booked any events. Click on this
+							<router-link to="/events">link</router-link> to book one
+						</div>
+						<div
+							class="col-sm-6"
+							v-for="event in sampleBooked"
+							:key="event.event_id"
+						>
+							<div class="card my-2">
+								<div class="card-body py-1">
+									<h3
+										class="card-title"
+										@click="navigateToEvent(event.event_id)"
+									>
+										{{ event.event_title }}
+									</h3>
 								</div>
 							</div>
 						</div>
@@ -180,82 +179,6 @@
 			</div>
 		</div>
 	</div>
-	<!-- <div class="left">
-			<h2 style="text-align: center;">
-				PROFILE
-			</h2>
-			<div>
-				<ul>
-					<li>
-						{{ user.first_name }}
-					</li>
-					<li>
-						{{ user.last_name }}
-					</li>
-					<li>
-						{{ user.email }}
-					</li>
-				</ul>
-			</div>
-			<div>
-				<ul style="cursor: pointer;">
-					<li @click="showEventsCreated">
-						Total Events Created: {{ userCreated.length }}
-					</li>
-					<li @click="showEventsToAttend">
-						Total Events Booked: {{ userBooked.length }}
-					</li>
-				</ul>
-			</div>
-		</div>
-
-		<div class="right" v-if="show">
-			<div v-if="showCreated">
-				<h2 style="text-align: center;">
-					EVENTS YOU CREATED
-				</h2>
-				<div v-if="!userCreated.length">
-					You have not created any events. Click on this
-					<router-link to="/create-event">link</router-link> to create one
-				</div>
-				<div
-					style="width: 100%;"
-					v-for="event in userCreated"
-					:key="event.event_id"
-				>
-					<ul style="width: 85%; cursor: pointer; display: inline-block;">
-						<li @click="navigateToEvent(event.event_id)">
-							{{ event.title }}
-						</li>
-					</ul>
-					<i
-						id="edit"
-						@click="edit(event.event_id)"
-						class="fas fa-pencil-alt"
-					></i> -->
-	<!-- <i class="fas fa-pencil-alt"></i> -->
-	<!-- </div>
-			</div>
-			<div v-if="showAttendance">
-				<h2 style="text-align: center;">
-					EVENTS TO ATTEND
-				</h2>
-				<div v-if="!userBooked.length">
-					You have not booked any events. Click on this
-					<router-link to="/events">link</router-link> to book one
-				</div>
-				<ul
-					style="cursor: pointer;"
-					v-for="event in userBooked"
-					:key="event.id"
-				>
-					<li @click="navigateToEvent(event.event_id)">
-						{{ event.event_title }}
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div> -->
 </template>
 
 <script>
@@ -265,44 +188,51 @@ import { dateMixin } from "../mixins/formatDate"
 
 export default {
 	mixins: [timeMixin, dateMixin],
+	created() {
+		this.sampleCreated = this.userCreated.slice(0, 2)
+		this.sampleBooked = this.userBooked.slice(0, 2)
+	},
 	computed: {
 		...mapState({
 			user: state => state.user.user,
 			userBooked: state => state.event.userEvents,
 			userCreated: state => state.event.userCreatedEvents,
-			userBookedLength: () => this.userBooked.length,
-			userCreatedLength: () => this.userCreated.length,
 		}),
-	},
-	created() {
-		this.sampleBooked = this.userBooked.slice(0, 2)
-		this.sampleCreated = this.userCreated.slice(0, 2)
 	},
 	data() {
 		return {
 			show: false,
 			showCreated: false,
-			showAttendance: false,
+			showBooked: false,
 			sampleCreated: null,
 			sampleBooked: null,
 		}
 	},
 	methods: {
-		showEventsCreated() {
-			this.show = true
-			this.showCreated = true
-			this.showAttendance = false
-		},
-		showEventsToAttend() {
-			this.show = true
-			this.showCreated = false
-			this.showAttendance = true
-		},
 		navigateToEvent(id) {
 			this.$router.push(`event/${id}`)
 		},
 		edit(id) {
 			this.$router.push(`edit-event/${id}`)
+		},
+		viewEvent(id) {
+			this.$router.push(`event/${id}`)
+		},
+		showAllCreated() {
+			this.showCreated = !this.showCreated
+			if (this.showCreated) {
+				this.sampleCreated = this.userCreated
+			} else {
+				this.sampleCreated = this.userCreated.slice(0, 2)
+			}
+		},
+		showAllBooked() {
+			this.showBooked = !this.showBooked
+			if (this.showBooked) {
+				this.sampleBooked = this.userBooked
+			} else {
+				this.sampleBooked = this.userBooked.slice(0, 2)
+			}
 		},
 	},
 	beforeDestroy() {
@@ -349,6 +279,19 @@ main {
 
 main .card {
 	margin-bottom: 20px;
+}
+
+.card:hover {
+	cursor: pointer;
+}
+
+button {
+	z-index: 200;
+}
+
+h2:hover,
+.click:hover {
+	cursor: pointer;
 }
 /* .profile {
 	display: flex;
