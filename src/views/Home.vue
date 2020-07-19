@@ -22,9 +22,19 @@ import NProgress from "nprogress"
 export default {
 	name: "Home",
 	methods: {
-		login() {
+		async login() {
 			this.$store.dispatch("user/logout")
-			this.$router.push({ name: "Login" })
+			NProgress.start()
+			const userInfo = {
+				email: "Jasnmichanhjhel66@gmail.com",
+				password: "12345678",
+			}
+			try {
+				await this.$store.dispatch("user/login", userInfo)
+				NProgress.done()
+			} catch (error) {
+				console.log(error.response)
+			}
 		},
 	},
 }
